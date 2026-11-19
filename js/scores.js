@@ -34,7 +34,9 @@
   const c = window.MOZGALICE_CONFIG || {};
   if (!c.supabaseUrl || !c.supabaseAnonKey) return;
   const base = c.supabaseUrl.replace(/\/$/, '') + '/rest/v1/scores';
-  const headers = { apikey: c.supabaseAnonKey, Authorization: 'Bearer ' + c.supabaseAnonKey, 'Content-Type': 'application/json' };
+  // New publishable keys (sb_publishable_...) go only in the apikey header; legacy anon JWTs also as Bearer.
+  const headers = { apikey: c.supabaseAnonKey, 'Content-Type': 'application/json' };
+  if (c.supabaseAnonKey.startsWith('eyJ')) headers.Authorization = 'Bearer ' + c.supabaseAnonKey;
   const PENDING = 'mozgalice.pending';
   const pending = () => { try { return JSON.parse(localStorage.getItem(PENDING) || '[]'); } catch (e) { return []; } };
   async function post(entry) {

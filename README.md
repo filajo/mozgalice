@@ -34,7 +34,7 @@ alter table scores enable row level security;
 create policy "read" on scores for select to anon using (true);
 create policy "insert" on scores for insert to anon with check (true);
 ```
-3. Upiši Project URL i anon key u `js/config.js`.
+3. Upiši Project URL i Publishable key (`sb_publishable_...`) u `js/config.js`. Secret key nikad ne ide u aplikaciju.
 
 ## Lokalno pokretanje
 `python3 -m http.server` u ovoj mapi, pa otvori http://localhost:8000
