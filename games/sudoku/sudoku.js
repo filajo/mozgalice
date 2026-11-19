@@ -3,6 +3,15 @@
   const LEVELS = E.LEVELS;
   const STATE_KEY = 'sudoku.state';
   const PENALTY_MISTAKE = 30, PENALTY_HINT = 60; // seconds added to the score
+  // Points-based scoring (for the all-players leaderboard): harder levels are worth more,
+  // mistakes/hints cost points, a clean solve earns a bonus.
+  const LEVEL_POINTS = { easy: 10, medium: 20, hard: 35, expert: 50 };
+  function pointsFor(entry) {
+    const base = LEVEL_POINTS[entry.level] || 15;
+    let p = base - entry.mistakes * 2 - entry.hints * 3;
+    if (entry.mistakes === 0 && entry.hints === 0) p += 5;
+    return Math.max(Math.round(base * 0.4), p);
+  }
 
   const $ = id => document.getElementById(id);
   const fmt = s => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, x = String(s % 60).padStart(2, '0'); return h ? `${h}:${String(m).padStart(2, '0')}:${x}` : `${m}:${x}`; };
@@ -260,6 +269,7 @@
     $('win-summary').textContent = `${S.mode === 'daily' ? 'Dnevni izazov' : 'Slobodna igra'} · ${LEVELS[S.level].label}`;
     $('win-time').textContent = fmt(S.seconds);
     $('win-points').textContent = fmt(score);
+    $('win-score-points').textContent = pointsFor(entry);
     $('win-rank').textContent = (S.mistakes || S.hints)
       ? `Rezultat = vrijeme + ${PENALTY_MISTAKE} s po grešci (${S.mistakes}) + ${PENALTY_HINT} s po pomoći (${S.hints}).`
       : 'Bez grešaka i bez pomoći. Bravo!';
@@ -347,15 +357,16 @@
       }
       const rows = players.map(p => {
         const mine = all.filter(s => s.player === p);
-        return { player: p, solved: mine.length, wins: wins[p] || 0, avg: mine.reduce((a, s) => a + s.score, 0) / (mine.length || 1) };
-      }).sort((a, b) => b.wins - a.wins || b.solved - a.solved);
+        const points = mine.reduce((a, s) => a + pointsFor(s), 0);
+        return { player: p, solved: mine.length, wins: wins[p] || 0, points, avg: mine.reduce((a, s) => a + s.score, 0) / (mine.length || 1) };
+      }).sort((a, b) => b.points - a.points || b.wins - a.wins || b.solved - a.solved);
       const g = document.createElement('div'); g.className = 'score-group';
-      g.innerHTML = '<h3>Igrači</h3>' + (rows.length ? rows.map((r, i) =>
-        `<div class="score-row"><span class="pos">${i + 1}.</span><span class="name">${esc(r.player)}<div class="sub">riješeno ${r.solved} · prosjek ${fmt(r.avg)}</div></span><span class="t">${r.wins} 🏆</span></div>`
+      g.innerHTML = '<h3>Bodovna ljestvica</h3>' + (rows.length ? rows.map((r, i) =>
+        `<div class="score-row"><span class="pos">${i + 1}.</span><span class="name">${esc(r.player)}<div class="sub">riješeno ${r.solved} · pobjede ${r.wins} 🏆 · prosjek ${fmt(r.avg)}</div></span><span class="t">${r.points} b.</span></div>`
       ).join('') : '<div class="score-empty">Još nema rezultata.</div>');
       body.appendChild(g);
       const p = document.createElement('p'); p.className = 'muted small';
-      p.textContent = '🏆 = broj dnevnih izazova u kojima je igrač bio najbrži.';
+      p.textContent = 'Bodovi po riješenoj zagonetki: Lako 10 · Srednje 20 · Teško 35 · Stručnjak 50, minus 2 po grešci i 3 po pomoći, uz bonus +5 za rješenje bez ijedne greške i pomoći. 🏆 = broj dnevnih izazova u kojima je igrač bio najbrži.';
       body.appendChild(p);
     }
   }
