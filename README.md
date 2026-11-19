@@ -33,6 +33,8 @@ create table scores (
 alter table scores enable row level security;
 create policy "read" on scores for select to anon using (true);
 create policy "insert" on scores for insert to anon with check (true);
+grant select, insert on scores to anon;
+grant usage, select on sequence scores_id_seq to anon;
 ```
 3. Upiši Project URL i Publishable key (`sb_publishable_...`) u `js/config.js`. Secret key nikad ne ide u aplikaciju.
 
