@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#3b5bdb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mozgalice">
+<title>Sudoku · Mozgalice</title>
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="icon" href="../../icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+<link rel="stylesheet" href="../../css/common.css">
+<link rel="stylesheet" href="sudoku.css">
+</head>
+<body>
+<div class="app">
+  <!-- MENU -->
+  <section id="menu" class="screen">
+    <header class="topbar">
+      <a class="icon-btn" href="../../" aria-label="Natrag">‹</a>
+      <h1>Sudoku</h1>
+      <button class="icon-btn" id="btn-scores" aria-label="Ljestvica">🏆</button>
+    </header>
+
+    <label class="player">
+      <span class="muted">Ime igrača</span>
+      <input id="player" maxlength="20" placeholder="npr. Filip" autocomplete="off">
+    </label>
+
+    <button id="btn-continue" class="big-btn primary" hidden>Nastavi igru <small id="continue-info"></small></button>
+
+    <h2>Dnevni izazov</h2>
+    <p class="muted small">Ista zagonetka za sve igrače danas. Usporedite vrijeme!</p>
+    <div class="level-grid" id="daily-levels"></div>
+
+    <h2>Slobodna igra</h2>
+    <div class="level-grid" id="free-levels"></div>
+  </section>
+
+  <!-- GAME -->
+  <section id="game" class="screen" hidden>
+    <header class="topbar">
+      <button class="icon-btn" id="btn-menu" aria-label="Izbornik">‹</button>
+      <div class="game-info">
+        <strong id="info-level"></strong>
+        <span class="muted small" id="info-mode"></span>
+      </div>
+      <button class="icon-btn" id="btn-pause" aria-label="Pauza">⏸</button>
+    </header>
+    <div class="stats">
+      <span>Greške: <b id="mistakes">0</b></span>
+      <span id="timer">0:00</span>
+      <span>Pomoć: <b id="hints">0</b></span>
+    </div>
+    <div class="board-wrap">
+      <div id="board" class="board" role="grid" aria-label="Sudoku ploča"></div>
+      <div id="paused" class="paused" hidden><button class="big-btn primary" id="btn-resume">Nastavi</button></div>
+    </div>
+    <div class="tools">
+      <button class="tool" id="t-undo"><span>↶</span>Poništi</button>
+      <button class="tool" id="t-erase"><span>⌫</span>Obriši</button>
+      <button class="tool" id="t-notes"><span>✎</span>Bilješke <i id="notes-state">ISKLJ</i></button>
+      <button class="tool" id="t-hint"><span>💡</span>Pomoć</button>
+    </div>
+    <div class="numpad" id="numpad"></div>
+  </section>
+
+  <!-- SCORES -->
+  <section id="scores" class="screen" hidden>
+    <header class="topbar">
+      <button class="icon-btn" id="btn-scores-back" aria-label="Natrag">‹</button>
+      <h1>Ljestvica</h1>
+      <span class="icon-btn"></span>
+    </header>
+    <div class="tabs" id="score-tabs">
+      <button data-tab="today" class="active">Danas</button>
+      <button data-tab="best">Najbolji</button>
+      <button data-tab="stats">Statistika</button>
+    </div>
+    <p class="muted small" id="score-note"></p>
+    <div id="score-body"></div>
+  </section>
+</div>
+
+<!-- WIN DIALOG -->
+<div id="win" class="overlay" hidden>
+  <div class="dialog">
+    <div class="trophy">🎉</div>
+    <h2>Riješeno!</h2>
+    <p id="win-summary"></p>
+    <div class="win-stats">
+      <div><b id="win-time"></b><span>vrijeme</span></div>
+      <div><b id="win-points"></b><span>rezultat</span></div>
+    </div>
+    <p class="muted small" id="win-rank"></p>
+    <button class="big-btn primary" id="btn-win-new">Nova igra</button>
+    <button class="big-btn" id="btn-win-scores">Ljestvica</button>
+  </div>
+</div>
+
+<script src="../../js/config.js"></script>
+<script src="../../js/scores.js"></script>
+<script src="engine.js"></script>
+<script src="sudoku.js"></script>
+<script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('../../sw.js', { scope: '../../' });</script>
+</body>
+</html>
