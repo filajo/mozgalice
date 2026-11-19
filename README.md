@@ -37,6 +37,11 @@ grant select, insert on scores to anon;
 grant usage, select on sequence scores_id_seq to anon;
 ```
 3. Upiši Project URL i Publishable key (`sb_publishable_...`) u `js/config.js`. Secret key nikad ne ide u aplikaciju.
+4. (Opcionalno, za brisanje rezultata preko oba mobitela) u SQL Editoru pokreni i:
+```sql
+create policy "delete" on scores for delete to anon using (true);
+grant delete on scores to anon;
+```
 
 ## Lokalno pokretanje
 `python3 -m http.server` u ovoj mapi, pa otvori http://localhost:8000

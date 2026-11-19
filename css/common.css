@@ -95,6 +95,11 @@ button { font: inherit; color: inherit; }
 .score-row .t { font-variant-numeric: tabular-nums; font-weight: 600; }
 .score-row .sub { font-size: 12px; color: var(--muted); }
 .score-empty { padding: 14px; color: var(--muted); font-size: 14px; }
+.score-del {
+  flex: none; width: 30px; height: 30px; border: 0; border-radius: 9px; background: none;
+  color: var(--muted); font-size: 16px; cursor: pointer; display: grid; place-items: center;
+}
+.score-del:active { background: var(--error-soft); color: var(--error); }
 .totals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
 .totals-tile {
   background: var(--surface); border-radius: 14px; padding: 14px; text-align: center;

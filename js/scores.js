@@ -24,10 +24,38 @@
       let list = load();
       if (Scores.remote) { try { list = await Scores.remote.list(filter); } catch (e) { console.warn('remote list failed', e); } }
       return list.filter(s => Object.entries(filter).every(([k, v]) => s[k] === v));
+    },
+
+    // Removes one submitted result (matched by game + player + its submission timestamp).
+    async remove(entry) {
+      const list = load().filter(e => !(e.game === entry.game && e.player === entry.player && e.at === entry.at));
+      save(list);
+      if (Scores.remote) { try { await Scores.remote.remove(entry); } catch (e) { console.warn('remote remove failed', e); } }
     }
   };
   global.Scores = Scores;
 })(window);
+
+// Small reusable confirm dialog. Expects the page to have:
+// <div id="confirm" class="overlay" hidden><div class="dialog">
+//   <p id="confirm-text"></p>
+//   <button id="confirm-yes" class="big-btn primary">Da</button>
+//   <button id="confirm-no" class="big-btn">Ne</button>
+// </div></div>
+window.UI = {
+  confirm(text) {
+    return new Promise(resolve => {
+      const el = document.getElementById('confirm');
+      if (!el) { resolve(window.confirm(text)); return; } // fallback if the markup is missing
+      document.getElementById('confirm-text').textContent = text;
+      el.hidden = false;
+      const yes = document.getElementById('confirm-yes'), no = document.getElementById('confirm-no');
+      const cleanup = () => { el.hidden = true; yes.onclick = null; no.onclick = null; };
+      yes.onclick = () => { cleanup(); resolve(true); };
+      no.onclick = () => { cleanup(); resolve(false); };
+    });
+  }
+};
 
 // Supabase adapter (plain REST, no SDK). Enabled when config.js has a URL and key.
 (function () {
@@ -59,6 +87,11 @@
       const r = await fetch(`${base}?select=*&order=score.asc&limit=1000${q ? '&' + q : ''}`, { headers });
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
+    },
+    async remove(entry) {
+      const q = `game=eq.${encodeURIComponent(entry.game)}&player=eq.${encodeURIComponent(entry.player)}&at=eq.${encodeURIComponent(entry.at)}`;
+      const r = await fetch(`${base}?${q}`, { method: 'DELETE', headers });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
     }
   };
 })();

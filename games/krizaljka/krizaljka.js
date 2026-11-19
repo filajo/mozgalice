@@ -63,16 +63,25 @@
   }
 
   // ---------- game setup ----------
-  function startDaily() {
+  async function startDaily() {
     const st = loadState();
     const d = today();
     if (st && !st.won && st.mode === 'daily' && st.day === d) return resume(st);
+    if (st && !st.won) {
+      const ok = await UI.confirm('Imaš nezavršenu križaljku. Ako započneš novu, ta igra se gubi (ne broji se u statistiku). Nastaviti?');
+      if (!ok) return;
+    }
     if (!ensurePlayer()) return;
     const grid = E.generate(WORDS, `${d}:krizaljka`, GRID_OPTS);
     beginGame('daily', d, grid);
   }
 
-  function startFree() {
+  async function startFree() {
+    const st = loadState();
+    if (st && !st.won) {
+      const ok = await UI.confirm('Imaš nezavršenu križaljku. Ako započneš novu, ta igra se gubi (ne broji se u statistiku). Nastaviti?');
+      if (!ok) return;
+    }
     if (!ensurePlayer()) return;
     const seed = 'free:' + Date.now() + ':' + Math.random();
     const grid = E.generate(WORDS, seed, GRID_OPTS);
@@ -357,10 +366,12 @@
     const all = await Scores.list({ game: 'krizaljka' });
     const body = $('score-body');
     body.innerHTML = '';
+    const me = Scores.getPlayer();
+    const delBtn = r => r.player === me ? `<button class="score-del" data-game="${r.game}" data-player="${esc(r.player)}" data-at="${esc(r.at)}" data-day="${esc(r.day || '')}" data-mode="${esc(r.mode || '')}" aria-label="Izbriši">🗑</button>` : '';
     const group = (title, rows, sub) => {
       const g = document.createElement('div'); g.className = 'score-group';
       g.innerHTML = `<h3>${title}</h3>` + (rows.length ? rows.map((r, i) =>
-        `<div class="score-row"><span class="pos">${i + 1}.</span><span class="name">${esc(r.player)}<div class="sub">${sub(r)}</div></span><span class="t">${fmt(r.score)}</span></div>`
+        `<div class="score-row"><span class="pos">${i + 1}.</span><span class="name">${esc(r.player)}<div class="sub">${sub(r)}</div></span><span class="t">${fmt(r.score)}</span>${delBtn(r)}</div>`
       ).join('') : '<div class="score-empty">Još nema rezultata.</div>');
       body.appendChild(g);
     };
@@ -405,6 +416,17 @@
       body.appendChild(p);
     }
   }
+
+  $('score-body').addEventListener('click', async e => {
+    const btn = e.target.closest('.score-del');
+    if (!btn) return;
+    const ok = await UI.confirm('Izbrisati ovaj rezultat?');
+    if (!ok) return;
+    const entry = { game: btn.dataset.game, player: btn.dataset.player, at: btn.dataset.at };
+    await Scores.remove(entry);
+    if (btn.dataset.mode === 'daily') localStorage.removeItem(dailyDoneKey(btn.dataset.day));
+    openScores();
+  });
 
   // ---------- wiring ----------
   $('hidden-input').addEventListener('input', e => {
