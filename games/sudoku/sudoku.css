@@ -9,6 +9,8 @@
 }
 .icon-btn:active { background: var(--accent-softer); }
 #btn-pause { font-size: 18px; }
+.topbar-right { display: flex; gap: 2px; }
+#btn-restart { font-size: 22px; }
 h2 { font-size: 17px; margin: 22px 0 4px; }
 .big-btn {
   display: block; width: 100%; padding: 15px; border-radius: 14px; border: 0; margin-top: 10px;

@@ -2,6 +2,7 @@
   const E = window.SudokuEngine;
   const LEVELS = E.LEVELS;
   const STATE_KEY = 'sudoku.state';
+  const MAX_MISTAKES = 3;
   const PENALTY_MISTAKE = 30, PENALTY_HINT = 60; // seconds added to the score
   // Points-based scoring (for the all-players leaderboard): harder levels are worth more,
   // mistakes/hints cost points, a clean solve earns a bonus.
@@ -185,7 +186,7 @@
   function pushHistory(i) { S.history.push([i, S.values[i], S.notes[i]]); if (S.history.length > 200) S.history.shift(); }
 
   function input(n) {
-    if (S.won || selected < 0 || S.puzzle[selected]) return;
+    if (S.won || S.lost || selected < 0 || S.puzzle[selected]) return;
     const i = selected;
     if (S.values[i] === S.solution[i] && S.values[i]) return; // correct cells are locked
     if (notesMode) {
@@ -197,14 +198,35 @@
       pushHistory(i);
       S.values[i] = n;
       S.notes[i] = 0;
-      if (n !== S.solution[i]) S.mistakes++;
-      else {
+      if (n !== S.solution[i]) {
+        S.mistakes++;
+        if (S.mistakes >= MAX_MISTAKES) { renderBoard(); gameOver(); return; }
+      } else {
         // clear this number from notes of peers
         for (const p of E.PEERS[i]) S.notes[p] &= ~(1 << n);
         flashCompleted(i);
       }
     }
     afterChange();
+  }
+
+  function gameOver() {
+    S.lost = true; stopTimer();
+    localStorage.removeItem(STATE_KEY);
+    setTimeout(() => { $('gameover').hidden = false; }, 400);
+  }
+
+  async function restartPuzzle() {
+    if (!S || S.won) return;
+    const ok = await UI.confirm('Restartati ovu zagonetku? Napredak se gubi.');
+    if (!ok) return;
+    S.values = S.puzzle.slice(); S.notes = new Array(81).fill(0);
+    S.mistakes = 0; S.hints = 0; S.seconds = 0; S.history = []; S.lost = false;
+    selected = -1; notesMode = false;
+    $('gameover').hidden = true;
+    saveState();
+    renderBoard();
+    startTimer();
   }
 
   function flashCompleted(i) {
@@ -223,7 +245,7 @@
   }
 
   function erase() {
-    if (S.won || selected < 0 || S.puzzle[selected]) return;
+    if (S.won || S.lost || selected < 0 || S.puzzle[selected]) return;
     const i = selected;
     if (S.values[i] && S.values[i] === S.solution[i]) return;
     if (!S.values[i] && !S.notes[i]) return;
@@ -233,7 +255,7 @@
   }
 
   function undo() {
-    if (S.won) return;
+    if (S.won || S.lost) return;
     const h = S.history.pop();
     if (!h) return;
     const [i, val, notes] = h;
@@ -242,7 +264,7 @@
   }
 
   function hint() {
-    if (S.won) return;
+    if (S.won || S.lost) return;
     let i = selected;
     if (i < 0 || S.values[i] === S.solution[i]) {
       // pick an empty or wrong cell, preferring the one with fewest candidates
@@ -293,11 +315,11 @@
     tick = setInterval(() => { S.seconds++; $('timer').textContent = fmt(S.seconds); if (S.seconds % 5 === 0) saveState(); }, 1000);
   }
   function stopTimer() { if (tick) { clearInterval(tick); tick = null; saveState(); } }
-  function pause() { if (S.won) return; stopTimer(); $('paused').hidden = false; }
+  function pause() { if (S.won || S.lost) return; stopTimer(); $('paused').hidden = false; }
   function unpause() { $('paused').hidden = true; startTimer(); }
 
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden && !$('game').hidden && S && !S.won) pause();
+    if (document.hidden && !$('game').hidden && S && !S.won && !S.lost) pause();
   });
 
   // ---------- leaderboard ----------
@@ -401,6 +423,9 @@
   $('btn-menu').onclick = () => { stopTimer(); show('menu'); renderMenu(); };
   $('btn-pause').onclick = pause;
   $('btn-resume').onclick = unpause;
+  $('btn-restart').onclick = restartPuzzle;
+  $('btn-gameover-new').onclick = () => { $('gameover').hidden = true; startGame(S.mode, S.level); };
+  $('btn-gameover-menu').onclick = () => { $('gameover').hidden = true; show('menu'); renderMenu(); };
   $('t-undo').onclick = undo;
   $('t-erase').onclick = erase;
   $('t-notes').onclick = () => { notesMode = !notesMode; renderBoard(); };

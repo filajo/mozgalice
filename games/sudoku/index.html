@@ -65,10 +65,13 @@
         <strong id="info-level"></strong>
         <span class="muted small" id="info-mode"></span>
       </div>
-      <button class="icon-btn" id="btn-pause" aria-label="Pauza">⏸</button>
+      <div class="topbar-right">
+        <button class="icon-btn" id="btn-restart" aria-label="Restart">↻</button>
+        <button class="icon-btn" id="btn-pause" aria-label="Pauza">⏸</button>
+      </div>
     </header>
     <div class="stats">
-      <span>Greške: <b id="mistakes">0</b></span>
+      <span>Greške: <b id="mistakes">0</b>/3</span>
       <span id="timer">0:00</span>
       <span>Pomoć: <b id="hints">0</b></span>
     </div>
@@ -117,6 +120,17 @@
     <p class="muted small" id="win-rank"></p>
     <button class="big-btn primary" id="btn-win-new">Nova igra</button>
     <button class="big-btn" id="btn-win-scores">Ljestvica</button>
+  </div>
+</div>
+
+<!-- GAME OVER DIALOG -->
+<div id="gameover" class="overlay" hidden>
+  <div class="dialog">
+    <div class="trophy">😕</div>
+    <h2>3 greške</h2>
+    <p>Previše grešaka za ovu zagonetku. Igra se ne broji u statistiku.</p>
+    <button class="big-btn primary" id="btn-gameover-new">Nova igra</button>
+    <button class="big-btn" id="btn-gameover-menu">Izbornik</button>
   </div>
 </div>
 
