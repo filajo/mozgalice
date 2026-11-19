@@ -47,16 +47,12 @@ h2 { font-size: 17px; margin: 22px 0 4px; }
 .clue-text { flex: 1; font-size: 14px; }
 .clue-swap { color: var(--muted); font-size: 18px; }
 
-.kkeyboard { display: flex; flex-direction: column; gap: 6px; margin: 10px 0 4px; }
-.krow { display: flex; gap: 4px; justify-content: center; }
-.kkey {
-  flex: 1; max-width: 34px; height: 40px; border: 0; border-radius: 8px; background: var(--surface);
-  font-size: 15px; font-weight: 600; color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,.08); cursor: pointer;
+.hidden-input {
+  position: fixed; top: 0; left: 0; width: 1px; height: 1px; padding: 0; margin: 0; border: 0;
+  opacity: 0; font-size: 16px; /* 16px stops iOS Safari auto-zooming on focus */
 }
-.kkey:active { background: var(--accent-soft); }
-.kkey.wide { max-width: 64px; font-size: 18px; }
 
-.ktools { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 10px 0; }
+.ktools { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 14px 0; }
 .tool {
   border: 0; background: none; display: flex; flex-direction: column; align-items: center; gap: 2px;
   font-size: 12px; color: var(--muted); padding: 6px 0; border-radius: 12px; cursor: pointer;

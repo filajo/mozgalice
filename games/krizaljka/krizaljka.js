@@ -35,7 +35,7 @@
   // ---------- screens ----------
   function show(id) {
     for (const s of document.querySelectorAll('.screen')) s.hidden = s.id !== id;
-    if (id !== 'game') stopTimer();
+    if (id !== 'game') { stopTimer(); $('hidden-input').blur(); }
     window.scrollTo(0, 0);
   }
 
@@ -160,27 +160,15 @@
       if (!wordAt(r, c, dir)) dir = dir === 'across' ? 'down' : 'across';
     }
     renderAll();
+    focusHiddenInput();
   }
 
-  function buildKeyboard() {
-    const rows = [
-      ['A', 'B', 'C', 'Č', 'Ć', 'D', 'Đ', 'E', 'F', 'G'],
-      ['H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'R'],
-      ['S', 'Š', 'T', 'U', 'V', 'Z', 'Ž', '⌫']
-    ];
-    const kb = $('kkeyboard');
-    kb.innerHTML = '';
-    for (const row of rows) {
-      const rowEl = document.createElement('div'); rowEl.className = 'krow';
-      for (const k of row) {
-        const b = document.createElement('button');
-        b.className = 'kkey' + (k === '⌫' ? ' wide' : '');
-        b.textContent = k;
-        b.onclick = () => k === '⌫' ? backspace() : typeLetter(k);
-        rowEl.appendChild(b);
-      }
-      kb.appendChild(rowEl);
-    }
+  // Typing goes through a hidden text input so the phone's own keyboard (with its own
+  // Croatian diacritics) pops up, instead of a custom on-screen one.
+  function focusHiddenInput() {
+    const input = $('hidden-input');
+    input.value = '';
+    input.focus({ preventScroll: true });
   }
 
   // ---------- typing ----------
@@ -319,7 +307,7 @@
       if (active) li.classList.add('active');
       if (wordDone(cl)) li.classList.add('done');
       li.innerHTML = `<b>${cl.number}.</b><span>${esc(cl.clue)}</span>`;
-      li.onclick = () => { selected = { r: cl.row, c: cl.col }; dir = cl.dir; renderAll(); };
+      li.onclick = () => { selected = { r: cl.row, c: cl.col }; dir = cl.dir; renderAll(); focusHiddenInput(); };
       (cl.dir === 'across' ? across : down).appendChild(li);
     }
   }
@@ -332,7 +320,7 @@
     tick = setInterval(() => { S.seconds++; $('timer').textContent = fmt(S.seconds); if (S.seconds % 5 === 0) saveState(); }, 1000);
   }
   function stopTimer() { if (tick) { clearInterval(tick); tick = null; saveState(); } }
-  function pause() { if (!S || S.won) return; stopTimer(); $('paused').hidden = false; }
+  function pause() { if (!S || S.won) return; stopTimer(); $('paused').hidden = false; $('hidden-input').blur(); }
   function unpause() { $('paused').hidden = true; startTimer(); }
 
   document.addEventListener('visibilitychange', () => {
@@ -341,7 +329,7 @@
 
   // ---------- win ----------
   async function win() {
-    S.won = true; stopTimer();
+    S.won = true; stopTimer(); $('hidden-input').blur();
     const hints = hintsUsed();
     saveState();
     const entry = { game: 'krizaljka', mode: S.mode, level: S.mode === 'daily' ? 'dnevna' : 'vjezba', day: S.day, seconds: S.seconds, mistakes: 0, hints, score: S.seconds + hints * PENALTY_HINT_SECONDS };
@@ -419,7 +407,20 @@
   }
 
   // ---------- wiring ----------
-  buildKeyboard();
+  $('hidden-input').addEventListener('input', e => {
+    const input = e.target;
+    const data = e.data != null ? e.data : input.value;
+    if (e.inputType === 'deleteContentBackward' || (!data && input.value === '')) {
+      backspace();
+    } else if (data) {
+      const ch = [...data].pop(); // last character typed, in case of odd autocomplete batches
+      if (/[a-zA-ZčćžšđČĆŽŠĐ]/.test(ch)) typeLetter(ch.toUpperCase());
+    }
+    input.value = '';
+  });
+  $('hidden-input').addEventListener('keydown', e => {
+    if (e.key === 'Backspace' && !e.target.value) { backspace(); e.preventDefault(); }
+  });
   $('player').addEventListener('change', e => { Scores.setPlayer(e.target.value); e.target.classList.remove('need'); });
   $('btn-daily').onclick = startDaily;
   $('btn-free').onclick = startFree;
@@ -430,7 +431,7 @@
   $('t-reveal-letter').onclick = revealLetter;
   $('t-reveal-word').onclick = revealWord;
   $('t-clear').onclick = clearWord;
-  $('clue-bar').onclick = () => { if (!selected) return; const other = dir === 'across' ? 'down' : 'across'; if (wordAt(selected.r, selected.c, other)) { dir = other; renderAll(); } };
+  $('clue-bar').onclick = () => { if (!selected) return; const other = dir === 'across' ? 'down' : 'across'; if (wordAt(selected.r, selected.c, other)) { dir = other; renderAll(); } focusHiddenInput(); };
   $('btn-scores').onclick = () => openScores();
   $('btn-scores-back').onclick = () => { show('menu'); renderMenu(); };
   for (const b of $('score-tabs').children) b.onclick = () => openScores(b.dataset.tab);
@@ -438,10 +439,16 @@
   $('btn-win-scores').onclick = () => { $('win').hidden = true; openScores('today'); };
 
   document.addEventListener('keydown', e => {
-    if ($('game').hidden || !S || e.target.tagName === 'INPUT') return;
+    if ($('game').hidden || !S) return;
+    const onHiddenInput = e.target === $('hidden-input');
+    if (e.target.tagName === 'INPUT' && !onHiddenInput) return; // e.g. the player name field
     const k = e.key;
-    if (k === 'Backspace') { backspace(); e.preventDefault(); return; }
-    if (k.length === 1 && /[a-zA-ZčćžšđČĆŽŠĐ]/.test(k)) { typeLetter(k.toUpperCase()); e.preventDefault(); return; }
+    // Typing itself is handled by the hidden input's own listeners (so the phone keyboard
+    // works); here we only need Backspace/letters for a physical keyboard with nothing focused.
+    if (!onHiddenInput) {
+      if (k === 'Backspace') { backspace(); e.preventDefault(); return; }
+      if (k.length === 1 && /[a-zA-ZčćžšđČĆŽŠĐ]/.test(k)) { typeLetter(k.toUpperCase()); e.preventDefault(); return; }
+    }
     if (!selected) return;
     const g = S.grid;
     if (k.startsWith('Arrow')) {
@@ -450,7 +457,7 @@
       if (k === 'ArrowDown') r = (r + 1) % g.rows;
       if (k === 'ArrowLeft') c = (c + g.cols - 1) % g.cols;
       if (k === 'ArrowRight') c = (c + 1) % g.cols;
-      if (g.cells[r][c]) { selected = { r, c }; renderAll(); }
+      if (g.cells[r][c]) { selected = { r, c }; renderAll(); focusHiddenInput(); }
       e.preventDefault();
     }
   });
