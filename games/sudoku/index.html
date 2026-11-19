@@ -75,17 +75,21 @@
       <span id="timer">0:00</span>
       <span>Pomoć: <b id="hints">0</b></span>
     </div>
-    <div class="board-wrap">
-      <div id="board" class="board" role="grid" aria-label="Sudoku ploča"></div>
-      <div id="paused" class="paused" hidden><button class="big-btn primary" id="btn-resume">Nastavi</button></div>
+    <div class="game-layout">
+      <div class="board-wrap">
+        <div id="board" class="board" role="grid" aria-label="Sudoku ploča"></div>
+        <div id="paused" class="paused" hidden><button class="big-btn primary" id="btn-resume">Nastavi</button></div>
+      </div>
+      <div class="game-controls">
+        <div class="tools">
+          <button class="tool" id="t-undo"><span>↶</span>Poništi</button>
+          <button class="tool" id="t-erase"><span>⌫</span>Obriši</button>
+          <button class="tool" id="t-notes"><span>✎</span>Bilješke <i id="notes-state">ISKLJ</i></button>
+          <button class="tool" id="t-hint"><span>💡</span>Pomoć</button>
+        </div>
+        <div class="numpad" id="numpad"></div>
+      </div>
     </div>
-    <div class="tools">
-      <button class="tool" id="t-undo"><span>↶</span>Poništi</button>
-      <button class="tool" id="t-erase"><span>⌫</span>Obriši</button>
-      <button class="tool" id="t-notes"><span>✎</span>Bilješke <i id="notes-state">ISKLJ</i></button>
-      <button class="tool" id="t-hint"><span>💡</span>Pomoć</button>
-    </div>
-    <div class="numpad" id="numpad"></div>
   </section>
 
   <!-- SCORES -->

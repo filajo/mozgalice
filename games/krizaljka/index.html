@@ -55,29 +55,35 @@
       <span id="timer">0:00</span>
       <span>Otkriveno: <b id="hints">0</b></span>
     </div>
-    <div class="board-wrap">
-      <div class="kgrid-scroll"><div id="kgrid" class="kgrid"></div></div>
-      <div id="paused" class="paused" hidden><button class="big-btn primary" id="btn-resume">Nastavi</button></div>
-    </div>
-    <button class="clue-bar" id="clue-bar">
-      <span class="clue-num" id="clue-num"></span>
-      <span class="clue-text" id="clue-text">Dodirni polje za početak</span>
-      <span class="clue-swap" aria-hidden="true">⇄</span>
-    </button>
-    <input id="hidden-input" class="hidden-input" type="text" maxlength="1" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" inputmode="text" aria-hidden="true" tabindex="-1">
-    <div class="ktools">
-      <button class="tool" id="t-reveal-letter"><span>🔤</span>Slovo</button>
-      <button class="tool" id="t-reveal-word"><span>💡</span>Riječ</button>
-      <button class="tool" id="t-clear"><span>⌫</span>Obriši</button>
-    </div>
-    <div class="clue-lists">
-      <div class="clue-col">
-        <h3>Vodoravno</h3>
-        <ol id="clues-across"></ol>
+    <div class="game-layout">
+      <div class="game-main">
+        <div class="board-wrap">
+          <div class="kgrid-scroll"><div id="kgrid" class="kgrid"></div></div>
+          <div id="paused" class="paused" hidden><button class="big-btn primary" id="btn-resume">Nastavi</button></div>
+        </div>
+        <input id="hidden-input" class="hidden-input" type="text" maxlength="1" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" inputmode="text" aria-hidden="true" tabindex="-1">
+        <div class="clue-tools-row">
+          <button class="clue-bar" id="clue-bar">
+            <span class="clue-num" id="clue-num"></span>
+            <span class="clue-text" id="clue-text">Dodirni polje za početak</span>
+            <span class="clue-swap" aria-hidden="true">⇄</span>
+          </button>
+          <div class="ktools">
+            <button class="tool" id="t-reveal-letter"><span>🔤</span>Slovo</button>
+            <button class="tool" id="t-reveal-word"><span>💡</span>Riječ</button>
+            <button class="tool" id="t-clear"><span>⌫</span>Obriši</button>
+          </div>
+        </div>
       </div>
-      <div class="clue-col">
-        <h3>Okomito</h3>
-        <ol id="clues-down"></ol>
+      <div class="clue-lists">
+        <div class="clue-col">
+          <h3>Vodoravno</h3>
+          <ol id="clues-across"></ol>
+        </div>
+        <div class="clue-col">
+          <h3>Okomito</h3>
+          <ol id="clues-down"></ol>
+        </div>
       </div>
     </div>
   </section>

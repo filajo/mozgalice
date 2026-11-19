@@ -75,3 +75,24 @@ h2 { font-size: 17px; margin: 22px 0 4px; }
 .win-stats div { display: flex; flex-direction: column; }
 .win-stats b { font-size: 26px; }
 .win-stats span { font-size: 13px; color: var(--muted); }
+
+.game-layout { display: flex; flex-direction: column; }
+.game-main { display: contents; }
+.clue-tools-row { display: contents; }
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .screen { padding: 6px 10px 10px; }
+  .app { max-width: none; }
+  .game-layout { flex-direction: row; align-items: flex-start; gap: 14px; }
+  .game-main { display: flex; flex-direction: column; flex: none; width: min(56vh, 46vw); gap: 6px; }
+  .kgrid-scroll { max-height: calc(100vh - 150px); }
+  .clue-tools-row { display: flex; align-items: center; gap: 6px; }
+  .clue-bar { margin-top: 0; flex: 1; min-width: 0; padding: 6px 8px; }
+  .clue-bar .clue-text {
+    font-size: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .ktools { margin: 0; flex: none; grid-template-columns: repeat(3, 1fr); width: 110px; gap: 2px; }
+  .ktools .tool { padding: 2px 0; font-size: 9px; }
+  .ktools .tool span { font-size: 15px; }
+  .clue-lists { flex: 1; min-width: 0; grid-template-columns: 1fr 1fr; margin-top: 0; max-height: calc(100vh - 70px); overflow-y: auto; }
+}

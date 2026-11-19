@@ -131,9 +131,11 @@
   function buildGrid() {
     const g = S.grid;
     const el = $('kgrid');
-    // Fit the grid to the screen width (minus the scroll container's border) instead of a fixed cell size.
+    // Fit the grid to the screen width and height (minus other chrome) instead of a fixed cell size,
+    // so it also fits when rotated to landscape, where height is the tighter constraint.
     const avail = document.querySelector('.kgrid-scroll').clientWidth || 320;
-    const cell = Math.max(18, Math.min(28, Math.floor((avail - 4) / g.cols)));
+    const availH = window.innerHeight - 140;
+    const cell = Math.max(16, Math.min(28, Math.floor(Math.min((avail - 4) / g.cols, availH / g.rows))));
     el.style.setProperty('--cell', cell + 'px');
     el.style.gridTemplateColumns = `repeat(${g.cols}, var(--cell))`;
     el.style.gridTemplateRows = `repeat(${g.rows}, var(--cell))`;
@@ -483,6 +485,9 @@
       e.preventDefault();
     }
   });
+
+  // Rotating the device changes the available width/height, so re-fit the grid.
+  window.addEventListener('resize', () => { if (S && !$('game').hidden) { buildGrid(); renderAll(); } });
 
   renderMenu();
 })();

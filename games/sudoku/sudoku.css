@@ -94,3 +94,17 @@ h2 { font-size: 17px; margin: 22px 0 4px; }
 .side-stat strong { font-size: 20px; }
 .side-stat-link { cursor: pointer; }
 .side-stat-link:active { transform: scale(.97); }
+
+.game-layout { display: flex; flex-direction: column; }
+.game-controls { display: contents; }
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .screen { padding: 6px 10px 10px; }
+  .app { max-width: none; }
+  .game-layout { flex-direction: row; align-items: flex-start; gap: 14px; }
+  .board-wrap { flex: none; width: min(62vh, 50vw); }
+  .board { width: 100%; }
+  .game-controls { display: flex; flex-direction: column; justify-content: center; gap: 8px; flex: 1; min-width: 0; }
+  .tools { margin: 0; }
+  .numpad { grid-template-columns: repeat(9, 1fr); }
+}
