@@ -39,6 +39,16 @@
         </span>
         <span class="chev" aria-hidden="true">›</span>
       </a>
+      <a class="game-card" href="games/krizaljka/">
+        <span class="game-icon" aria-hidden="true">
+          <svg viewBox="0 0 30 30"><g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="28" height="28" rx="3"/></g><g fill="currentColor"><rect x="1" y="1" width="7" height="7"/><rect x="15" y="1" width="7" height="7"/><rect x="8" y="8" width="7" height="7"/><rect x="22" y="8" width="7" height="7"/><rect x="1" y="15" width="7" height="7"/><rect x="15" y="15" width="7" height="7"/><rect x="8" y="22" width="7" height="7"/></g></svg>
+        </span>
+        <span class="game-text">
+          <strong>Križaljke</strong>
+          <span class="muted" id="krizaljka-sub">Nova hrvatska križaljka svaki dan</span>
+        </span>
+        <span class="chev" aria-hidden="true">›</span>
+      </a>
       <div class="game-card soon" aria-disabled="true">
         <span class="game-icon" aria-hidden="true">＋</span>
         <span class="game-text"><strong>Uskoro još igara</strong><span class="muted">Pamćenje, logika, brojevi…</span></span>
@@ -70,6 +80,10 @@
   try {
     const s = JSON.parse(localStorage.getItem('sudoku.state') || 'null');
     if (s && !s.won) document.getElementById('sudoku-sub').textContent = 'Nastavi započetu igru';
+  } catch (e) {}
+  try {
+    const k = JSON.parse(localStorage.getItem('krizaljka.state') || 'null');
+    if (k && !k.won) document.getElementById('krizaljka-sub').textContent = 'Nastavi započetu križaljku';
   } catch (e) {}
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>

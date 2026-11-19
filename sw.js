@@ -1,5 +1,5 @@
 // Offline cache. Bump VERSION whenever any file changes so phones pick up the update.
-const VERSION = 'v5';
+const VERSION = 'v6';
 const CACHE = 'mozgalice-' + VERSION;
 const FILES = [
   './',
@@ -18,7 +18,13 @@ const FILES = [
   'games/sudoku/index.html',
   'games/sudoku/sudoku.css',
   'games/sudoku/sudoku.js',
-  'games/sudoku/engine.js'
+  'games/sudoku/engine.js',
+  'games/krizaljka/',
+  'games/krizaljka/index.html',
+  'games/krizaljka/krizaljka.css',
+  'games/krizaljka/krizaljka.js',
+  'games/krizaljka/engine.js',
+  'games/krizaljka/words.js'
 ];
 
 self.addEventListener('install', e => {

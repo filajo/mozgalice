@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#3b5bdb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mozgalice">
+<title>Križaljka · Mozgalice</title>
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="icon" href="../../icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+<link rel="stylesheet" href="../../css/common.css">
+<link rel="stylesheet" href="krizaljka.css">
+</head>
+<body>
+<div class="app">
+  <!-- MENU -->
+  <section id="menu" class="screen">
+    <header class="topbar">
+      <a class="icon-btn" href="../../" aria-label="Natrag">‹</a>
+      <h1>Križaljka</h1>
+      <button class="icon-btn" id="btn-scores" aria-label="Ljestvica">🏆</button>
+    </header>
+
+    <label class="player">
+      <span class="muted">Ime igrača</span>
+      <input id="player" maxlength="20" placeholder="npr. Filip" autocomplete="off">
+    </label>
+
+    <button id="btn-continue" class="big-btn primary" hidden>Nastavi igru <small id="continue-info"></small></button>
+
+    <h2>Dnevna križaljka</h2>
+    <p class="muted small">Ista križaljka za sve igrače danas. Nova svaki dan u ponoć.</p>
+    <button id="btn-daily" class="big-btn primary">Igraj</button>
+    <p class="muted small" id="daily-done" hidden></p>
+
+    <h2>Vježba</h2>
+    <p class="muted small">Nova nasumična križaljka za vježbu, bez utjecaja na dnevnu ljestvicu.</p>
+    <button id="btn-free" class="big-btn">Nova vježba</button>
+  </section>
+
+  <!-- GAME -->
+  <section id="game" class="screen" hidden>
+    <header class="topbar">
+      <button class="icon-btn" id="btn-menu" aria-label="Izbornik">‹</button>
+      <div class="game-info">
+        <strong id="info-mode"></strong>
+        <span class="muted small" id="info-day"></span>
+      </div>
+      <button class="icon-btn" id="btn-pause" aria-label="Pauza">⏸</button>
+    </header>
+    <div class="stats">
+      <span id="timer">0:00</span>
+      <span>Otkriveno: <b id="hints">0</b></span>
+    </div>
+    <div class="board-wrap">
+      <div class="kgrid-scroll"><div id="kgrid" class="kgrid"></div></div>
+      <div id="paused" class="paused" hidden><button class="big-btn primary" id="btn-resume">Nastavi</button></div>
+    </div>
+    <button class="clue-bar" id="clue-bar">
+      <span class="clue-num" id="clue-num"></span>
+      <span class="clue-text" id="clue-text">Dodirni polje za početak</span>
+      <span class="clue-swap" aria-hidden="true">⇄</span>
+    </button>
+    <div class="kkeyboard" id="kkeyboard"></div>
+    <div class="ktools">
+      <button class="tool" id="t-reveal-letter"><span>🔤</span>Slovo</button>
+      <button class="tool" id="t-reveal-word"><span>💡</span>Riječ</button>
+      <button class="tool" id="t-clear"><span>⌫</span>Obriši</button>
+    </div>
+    <div class="clue-lists">
+      <div class="clue-col">
+        <h3>Vodoravno</h3>
+        <ol id="clues-across"></ol>
+      </div>
+      <div class="clue-col">
+        <h3>Okomito</h3>
+        <ol id="clues-down"></ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCORES -->
+  <section id="scores" class="screen" hidden>
+    <header class="topbar">
+      <button class="icon-btn" id="btn-scores-back" aria-label="Natrag">‹</button>
+      <h1>Ljestvica</h1>
+      <span class="icon-btn"></span>
+    </header>
+    <div class="tabs" id="score-tabs">
+      <button data-tab="today" class="active">Danas</button>
+      <button data-tab="stats">Ukupno</button>
+    </div>
+    <p class="muted small" id="score-note"></p>
+    <div id="score-body"></div>
+  </section>
+</div>
+
+<!-- WIN DIALOG -->
+<div id="win" class="overlay" hidden>
+  <div class="dialog">
+    <div class="trophy">🎉</div>
+    <h2>Riješeno!</h2>
+    <p id="win-summary"></p>
+    <div class="win-stats">
+      <div><b id="win-time"></b><span>vrijeme</span></div>
+      <div><b id="win-score-points"></b><span>bodovi</span></div>
+    </div>
+    <p class="muted small" id="win-rank"></p>
+    <button class="big-btn primary" id="btn-win-new">Izbornik</button>
+    <button class="big-btn" id="btn-win-scores">Ljestvica</button>
+  </div>
+</div>
+
+<script src="../../js/config.js"></script>
+<script src="../../js/scores.js"></script>
+<script src="words.js"></script>
+<script src="engine.js"></script>
+<script src="krizaljka.js"></script>
+<script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('../../sw.js', { scope: '../../' });</script>
+</body>
+</html>

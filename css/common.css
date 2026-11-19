@@ -59,6 +59,10 @@ button { font: inherit; color: inherit; }
   background: var(--surface); color: var(--text); -webkit-user-select: text; user-select: text;
 }
 .player input.need { border-color: var(--error); box-shadow: 0 0 0 3px var(--error-soft); }
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: grid; place-items: center; padding: 20px; z-index: 10; }
+.dialog { background: var(--bg); border-radius: 20px; padding: 24px; width: 100%; max-width: 360px; text-align: center; }
+.dialog h2 { margin: 4px 0 8px; font-size: 24px; }
+.trophy { font-size: 48px; }
 .game-list { display: flex; flex-direction: column; gap: 12px; }
 .game-card {
   display: flex; align-items: center; gap: 14px;

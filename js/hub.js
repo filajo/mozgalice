@@ -1,7 +1,7 @@
 // Logic for the hub page's "Statistika" tab: combines stats across all games.
 (function () {
   const $ = id => document.getElementById(id);
-  const GAME_NAMES = { sudoku: 'Sudoku' };
+  const GAME_NAMES = { sudoku: 'Sudoku', krizaljka: 'Križaljka' };
   const fmt = s => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, x = String(s % 60).padStart(2, '0'); return h ? `${h}:${String(m).padStart(2, '0')}:${x}` : `${m}:${x}`; };
   const todayStr = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
   function weekDays() {
