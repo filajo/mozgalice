@@ -8,6 +8,13 @@
   const fmt = s => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, x = String(s % 60).padStart(2, '0'); return h ? `${h}:${String(m).padStart(2, '0')}:${x}` : `${m}:${x}`; };
   const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
   const fmtDay = d => { const [y, m, dd] = d.split('-'); return `${+dd}.${+m}.${y}.`; };
+  const dstr = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  // Mon–Sun days of the current ISO week.
+  function weekDays() {
+    const d = new Date(); const offset = (d.getDay() + 6) % 7;
+    const monday = new Date(d); monday.setDate(d.getDate() - offset);
+    return [...Array(7).keys()].map(i => { const x = new Date(monday); x.setDate(monday.getDate() + i); return dstr(x); });
+  }
 
   let S = null;          // current game state
   let selected = -1;
@@ -50,6 +57,21 @@
       f.onclick = () => startGame('free', key);
       $('free-levels').appendChild(f);
     }
+    renderSideStats();
+  }
+
+  async function renderSideStats() {
+    const player = Scores.getPlayer();
+    if (!player) { $('stat-today').textContent = '–'; $('stat-week').textContent = '–'; $('stat-total').textContent = '–'; return; }
+    const mine = await Scores.list({ game: 'sudoku', player });
+    const d = today(), week = weekDays();
+    const todays = mine.filter(s => s.day === d);
+    const weeks = mine.filter(s => week.includes(s.day));
+    $('stat-today').textContent = todays.length;
+    $('stat-today-sub').textContent = todays.length ? `najbolje ${fmt(Math.min(...todays.map(s => s.score)))}` : 'još ništa';
+    $('stat-week').textContent = weeks.length;
+    $('stat-week-sub').textContent = weeks.length ? `ukupno ${fmt(weeks.reduce((a, s) => a + s.seconds, 0))}` : 'još ništa';
+    $('stat-total').textContent = mine.length;
   }
 
   // ---------- game ----------
@@ -287,13 +309,32 @@
       for (const [k, L] of Object.entries(LEVELS)) {
         group(`${L.label} · ${fmtDay(d)}`, all.filter(s => s.mode === 'daily' && s.day === d && s.level === k).sort((a, b) => a.score - b.score), detail);
       }
+    } else if (scoreTab === 'week') {
+      const week = weekDays();
+      for (const [k, L] of Object.entries(LEVELS)) {
+        group(`${L.label} · ovaj tjedan`,
+          all.filter(s => s.mode === 'daily' && week.includes(s.day) && s.level === k).sort((a, b) => a.score - b.score),
+          r => `${detail(r)} · ${fmtDay(r.day)}`);
+      }
     } else if (scoreTab === 'best') {
       for (const [k, L] of Object.entries(LEVELS)) {
         group(L.label, all.filter(s => s.level === k).sort((a, b) => a.score - b.score).slice(0, 10),
           r => `${detail(r)} · ${fmtDay(r.day)}`);
       }
     } else {
-      // stats: per player, daily head-to-head wins + solved counts
+      // stats: overall totals, then per player, daily head-to-head wins + solved counts
+      const totalSeconds = all.reduce((a, s) => a + s.seconds, 0);
+      const totalDays = new Set(all.map(s => s.day)).size;
+      const tiles = [
+        ['Riješeno', all.length, 'zagonetki ukupno'],
+        ['Vrijeme igre', fmt(totalSeconds), 'ukupno'],
+        ['Dani igranja', totalDays, 'dana s rezultatom'],
+        ['Najbolji rezultat', all.length ? fmt(Math.min(...all.map(s => s.score))) : '–', 'svih razina']
+      ];
+      const tg = document.createElement('div'); tg.className = 'totals-grid';
+      tg.innerHTML = tiles.map(([label, val, sub]) => `<div class="totals-tile"><strong>${val}</strong><span>${label} · ${sub}</span></div>`).join('');
+      body.appendChild(tg);
+
       const players = [...new Set(all.map(s => s.player))];
       const wins = {};
       const daily = all.filter(s => s.mode === 'daily');
@@ -322,7 +363,8 @@
 
   // ---------- wiring ----------
   buildBoard();
-  $('player').addEventListener('change', e => { Scores.setPlayer(e.target.value); e.target.classList.remove('need'); });
+  $('player').addEventListener('change', e => { Scores.setPlayer(e.target.value); e.target.classList.remove('need'); renderSideStats(); });
+  $('btn-total-stats').onclick = () => openScores('stats');
   $('btn-continue').onclick = () => resume(loadState());
   $('btn-menu').onclick = () => { stopTimer(); show('menu'); renderMenu(); };
   $('btn-pause').onclick = pause;

@@ -31,6 +31,24 @@
 
     <button id="btn-continue" class="big-btn primary" hidden>Nastavi igru <small id="continue-info"></small></button>
 
+    <div class="side-stats" id="side-stats">
+      <div class="side-stat">
+        <span class="muted small">Danas</span>
+        <strong id="stat-today">0</strong>
+        <span class="muted small" id="stat-today-sub"></span>
+      </div>
+      <div class="side-stat">
+        <span class="muted small">Ovaj tjedan</span>
+        <strong id="stat-week">0</strong>
+        <span class="muted small" id="stat-week-sub"></span>
+      </div>
+      <button class="side-stat side-stat-link" id="btn-total-stats">
+        <span class="muted small">Ukupno</span>
+        <strong id="stat-total">0</strong>
+        <span class="muted small">Sva statistika ›</span>
+      </button>
+    </div>
+
     <h2>Dnevni izazov</h2>
     <p class="muted small">Ista zagonetka za sve igrače danas. Usporedite vrijeme!</p>
     <div class="level-grid" id="daily-levels"></div>
@@ -76,8 +94,9 @@
     </header>
     <div class="tabs" id="score-tabs">
       <button data-tab="today" class="active">Danas</button>
+      <button data-tab="week">Tjedan</button>
       <button data-tab="best">Najbolji</button>
-      <button data-tab="stats">Statistika</button>
+      <button data-tab="stats">Ukupno</button>
     </div>
     <p class="muted small" id="score-note"></p>
     <div id="score-body"></div>

@@ -104,3 +104,20 @@ h2 { font-size: 17px; margin: 22px 0 4px; }
 .win-stats b { font-size: 28px; }
 .win-stats span { font-size: 13px; color: var(--muted); }
 .player input.need { border-color: var(--error); box-shadow: 0 0 0 3px var(--error-soft); }
+
+.side-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 4px 0 18px; }
+.side-stat {
+  background: var(--surface); border-radius: 12px; padding: 10px 8px; text-align: center;
+  display: flex; flex-direction: column; gap: 2px; box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  border: 0; font: inherit; color: inherit; cursor: default;
+}
+.side-stat strong { font-size: 20px; }
+.side-stat-link { cursor: pointer; }
+.side-stat-link:active { transform: scale(.97); }
+.totals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+.totals-tile {
+  background: var(--surface); border-radius: 14px; padding: 14px; text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+.totals-tile strong { display: block; font-size: 24px; }
+.totals-tile span { font-size: 12px; color: var(--muted); }
