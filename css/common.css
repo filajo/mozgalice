@@ -48,10 +48,17 @@ body {
 }
 button { font: inherit; color: inherit; }
 .muted { color: var(--muted); }
+.small { font-size: 13px; }
 
 .hub { max-width: 520px; margin: 0 auto; padding: 28px 18px; }
 .hub-header h1 { margin: 0 0 4px; font-size: 32px; }
 .hub-header p { margin: 0 0 24px; }
+.player { display: flex; flex-direction: column; gap: 4px; margin: 8px 0 16px; font-size: 13px; }
+.player input {
+  font-size: 17px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--text); -webkit-user-select: text; user-select: text;
+}
+.player input.need { border-color: var(--error); box-shadow: 0 0 0 3px var(--error-soft); }
 .game-list { display: flex; flex-direction: column; gap: 12px; }
 .game-card {
   display: flex; align-items: center; gap: 14px;
@@ -71,3 +78,23 @@ button { font: inherit; color: inherit; }
 .game-text strong { font-size: 18px; }
 .game-text .muted { font-size: 14px; }
 .chev { font-size: 28px; color: var(--muted); }
+
+/* Shared across the hub and games: tab bar, grouped lists, stat tiles. */
+.tabs { display: flex; background: var(--surface); border-radius: 12px; padding: 4px; margin: 8px 0; }
+.tabs button { flex: 1; border: 0; background: none; padding: 9px; border-radius: 9px; font-weight: 600; color: var(--muted); cursor: pointer; font-size: 15px; }
+.tabs button.active { background: var(--accent); color: #fff; }
+.score-group { background: var(--surface); border-radius: 14px; margin: 10px 0; overflow: hidden; }
+.score-group h3 { font-size: 14px; margin: 0; padding: 10px 14px; background: var(--accent-softer); }
+.score-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-top: 1px solid var(--line); font-size: 15px; }
+.score-row .pos { width: 22px; font-weight: 700; color: var(--muted); }
+.score-row .name { flex: 1; }
+.score-row .t { font-variant-numeric: tabular-nums; font-weight: 600; }
+.score-row .sub { font-size: 12px; color: var(--muted); }
+.score-empty { padding: 14px; color: var(--muted); font-size: 14px; }
+.totals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+.totals-tile {
+  background: var(--surface); border-radius: 14px; padding: 14px; text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+.totals-tile strong { display: block; font-size: 24px; }
+.totals-tile span { font-size: 12px; color: var(--muted); }

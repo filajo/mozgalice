@@ -1,5 +1,5 @@
 // Offline cache. Bump VERSION whenever any file changes so phones pick up the update.
-const VERSION = 'v3';
+const VERSION = 'v4';
 const CACHE = 'mozgalice-' + VERSION;
 const FILES = [
   './',
@@ -8,6 +8,7 @@ const FILES = [
   'css/common.css',
   'js/scores.js',
   'js/config.js',
+  'js/hub.js',
   'icons/icon.svg',
   'icons/icon-192.png',
   'icons/icon-512.png',

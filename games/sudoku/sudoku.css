@@ -10,11 +10,6 @@
 .icon-btn:active { background: var(--accent-softer); }
 #btn-pause { font-size: 18px; }
 h2 { font-size: 17px; margin: 22px 0 4px; }
-.player { display: flex; flex-direction: column; gap: 4px; margin: 8px 0 16px; font-size: 13px; }
-.player input {
-  font-size: 17px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line);
-  background: var(--surface); color: var(--text); -webkit-user-select: text; user-select: text;
-}
 .big-btn {
   display: block; width: 100%; padding: 15px; border-radius: 14px; border: 0; margin-top: 10px;
   background: var(--surface); font-size: 17px; font-weight: 600; cursor: pointer;
@@ -83,18 +78,6 @@ h2 { font-size: 17px; margin: 22px 0 4px; }
 .num small { font-size: 10px; color: var(--muted); }
 .num.complete { visibility: hidden; }
 
-.tabs { display: flex; background: var(--surface); border-radius: 12px; padding: 4px; margin: 8px 0; }
-.tabs button { flex: 1; border: 0; background: none; padding: 9px; border-radius: 9px; font-weight: 600; color: var(--muted); cursor: pointer; }
-.tabs button.active { background: var(--accent); color: #fff; }
-.score-group { background: var(--surface); border-radius: 14px; margin: 10px 0; overflow: hidden; }
-.score-group h3 { font-size: 14px; margin: 0; padding: 10px 14px; background: var(--accent-softer); }
-.score-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-top: 1px solid var(--line); font-size: 15px; }
-.score-row .pos { width: 22px; font-weight: 700; color: var(--muted); }
-.score-row .name { flex: 1; }
-.score-row .t { font-variant-numeric: tabular-nums; font-weight: 600; }
-.score-row .sub { font-size: 12px; color: var(--muted); }
-.score-empty { padding: 14px; color: var(--muted); font-size: 14px; }
-
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: grid; place-items: center; padding: 20px; z-index: 10; }
 .dialog { background: var(--bg); border-radius: 20px; padding: 24px; width: 100%; max-width: 360px; text-align: center; }
 .dialog h2 { margin: 4px 0 8px; font-size: 24px; }
@@ -103,7 +86,6 @@ h2 { font-size: 17px; margin: 22px 0 4px; }
 .win-stats div { display: flex; flex-direction: column; }
 .win-stats b { font-size: 28px; }
 .win-stats span { font-size: 13px; color: var(--muted); }
-.player input.need { border-color: var(--error); box-shadow: 0 0 0 3px var(--error-soft); }
 
 .side-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 4px 0 18px; }
 .side-stat {
@@ -114,10 +96,3 @@ h2 { font-size: 17px; margin: 22px 0 4px; }
 .side-stat strong { font-size: 20px; }
 .side-stat-link { cursor: pointer; }
 .side-stat-link:active { transform: scale(.97); }
-.totals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
-.totals-tile {
-  background: var(--surface); border-radius: 14px; padding: 14px; text-align: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,.08);
-}
-.totals-tile strong { display: block; font-size: 24px; }
-.totals-tile span { font-size: 12px; color: var(--muted); }

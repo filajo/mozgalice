@@ -20,23 +20,52 @@
     <h1>Mozgalice</h1>
     <p class="muted">Igre za vježbanje mozga. Bez reklama.</p>
   </header>
-  <nav class="game-list">
-    <a class="game-card" href="games/sudoku/">
-      <span class="game-icon" aria-hidden="true">
-        <svg viewBox="0 0 30 30"><g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="28" height="28" rx="3"/><path d="M10.3 1v28M19.6 1v28M1 10.3h28M1 19.6h28"/></g><text x="5.6" y="8.6" font-size="7" text-anchor="middle" fill="currentColor" font-weight="700">5</text><text x="15" y="18" font-size="7" text-anchor="middle" fill="currentColor" font-weight="700">3</text><text x="24.4" y="27.3" font-size="7" text-anchor="middle" fill="currentColor" font-weight="700">8</text></svg>
-      </span>
-      <span class="game-text">
-        <strong>Sudoku</strong>
-        <span class="muted" id="sudoku-sub">Lako, srednje, teško, stručnjak</span>
-      </span>
-      <span class="chev" aria-hidden="true">›</span>
-    </a>
-    <div class="game-card soon" aria-disabled="true">
-      <span class="game-icon" aria-hidden="true">＋</span>
-      <span class="game-text"><strong>Uskoro još igara</strong><span class="muted">Pamćenje, logika, brojevi…</span></span>
+
+  <div class="tabs" id="hub-tabs">
+    <button data-tab="games" class="active">Igre</button>
+    <button data-tab="stats">Statistika</button>
+  </div>
+
+  <!-- GAMES -->
+  <section id="tab-games">
+    <nav class="game-list">
+      <a class="game-card" href="games/sudoku/">
+        <span class="game-icon" aria-hidden="true">
+          <svg viewBox="0 0 30 30"><g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="28" height="28" rx="3"/><path d="M10.3 1v28M19.6 1v28M1 10.3h28M1 19.6h28"/></g><text x="5.6" y="8.6" font-size="7" text-anchor="middle" fill="currentColor" font-weight="700">5</text><text x="15" y="18" font-size="7" text-anchor="middle" fill="currentColor" font-weight="700">3</text><text x="24.4" y="27.3" font-size="7" text-anchor="middle" fill="currentColor" font-weight="700">8</text></svg>
+        </span>
+        <span class="game-text">
+          <strong>Sudoku</strong>
+          <span class="muted" id="sudoku-sub">Lako, srednje, teško, stručnjak</span>
+        </span>
+        <span class="chev" aria-hidden="true">›</span>
+      </a>
+      <div class="game-card soon" aria-disabled="true">
+        <span class="game-icon" aria-hidden="true">＋</span>
+        <span class="game-text"><strong>Uskoro još igara</strong><span class="muted">Pamćenje, logika, brojevi…</span></span>
+      </div>
+    </nav>
+  </section>
+
+  <!-- STATS -->
+  <section id="tab-stats" hidden>
+    <label class="player">
+      <span class="muted">Ime igrača</span>
+      <input id="player" maxlength="20" placeholder="npr. Filip" autocomplete="off">
+    </label>
+    <p class="muted small" id="stats-note"></p>
+
+    <div class="tabs" id="stats-tabs">
+      <button data-range="today" class="active">Danas</button>
+      <button data-range="week">Ovaj tjedan</button>
+      <button data-range="all">Ukupno</button>
     </div>
-  </nav>
+    <div class="totals-grid" id="stats-totals"></div>
+    <div id="stats-body"></div>
+  </section>
 </main>
+<script src="js/config.js"></script>
+<script src="js/scores.js"></script>
+<script src="js/hub.js"></script>
 <script>
   try {
     const s = JSON.parse(localStorage.getItem('sudoku.state') || 'null');
