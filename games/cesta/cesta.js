@@ -81,6 +81,7 @@
     S = st;
     show('game');
     setMarkerIcon('🚗');
+    $('map-bubble').hidden = true;
     renderRoute();
     showQuestion();
   }
@@ -97,35 +98,82 @@
   }
 
   // ---------- route / map ----------
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const HILLS = [ // decorative terrain blobs, purely visual (not tied to real geography)
+    { cx: 230, cy: 70, r: 22 }, { cx: 150, cy: 95, r: 18 }, { cx: 95, cy: 145, r: 20 },
+    { cx: 80, cy: 195, r: 16 }, { cx: 105, cy: 260, r: 18 }
+  ];
   let waypointsBuilt = false;
-  function buildWaypoints() {
+  let roadLength = 0;
+
+  function buildMap() {
+    const hg = $('map-hills');
+    for (const h of HILLS) {
+      const c = document.createElementNS(SVG_NS, 'circle');
+      c.setAttribute('cx', h.cx); c.setAttribute('cy', h.cy); c.setAttribute('r', h.r);
+      c.setAttribute('class', 'map-hill');
+      hg.appendChild(c);
+    }
     const g = $('map-waypoints');
-    g.innerHTML = '';
     for (const wp of E.ROUTE) {
-      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      const dot = document.createElementNS(SVG_NS, 'circle');
       dot.setAttribute('cx', wp.map.x); dot.setAttribute('cy', wp.map.y); dot.setAttribute('r', 4);
       dot.setAttribute('class', 'map-waypoint'); dot.dataset.km = wp.km;
       g.appendChild(dot);
-      const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      const label = document.createElementNS(SVG_NS, 'text');
       label.setAttribute('x', wp.map.x + 7); label.setAttribute('y', wp.map.y + (wp.labelDy ?? 3));
       label.setAttribute('class', 'map-label'); label.textContent = wp.name;
       g.appendChild(label);
     }
+    roadLength = $('map-road-done').getTotalLength();
     waypointsBuilt = true;
   }
 
+  // Converts a point in the map's 320x340 viewBox to a left/top % for the HTML overlay cards.
+  const mapPct = (x, y) => ({ left: (x / 320 * 100) + '%', top: (y / 340 * 100) + '%' });
+
   function renderRoute() {
-    if (!waypointsBuilt) buildWaypoints();
+    if (!waypointsBuilt) buildMap();
     const pos = E.positionOnRoute(S.km);
     for (const dot of $('map-waypoints').querySelectorAll('.map-waypoint')) {
       dot.classList.toggle('passed', S.km >= +dot.dataset.km);
     }
     $('map-marker').setAttribute('transform', `translate(${pos.mapX},${pos.mapY})`);
     $('route-km').textContent = `${S.km} / ${E.GOAL_KM} km · trenutno kod: ${pos.to ? pos.from + ' → ' + pos.to : pos.from}`;
+
+    const frac = Math.min(1, S.km / E.GOAL_KM);
+    const road = $('map-road-done');
+    road.setAttribute('stroke-dasharray', roadLength);
+    road.setAttribute('stroke-dashoffset', roadLength * (1 - frac));
+
+    $('map-card-current').hidden = false;
+    $('map-current-name').textContent = pos.reached.name;
+    $('map-current-sub').textContent = `${S.km} km od Vukovara`;
+
+    const upcoming = E.ROUTE.filter(wp => wp.km > S.km).slice(0, 3);
+    const nextCard = $('map-card-next');
+    if (upcoming.length) {
+      nextCard.hidden = false;
+      nextCard.innerHTML = upcoming.map(wp => `<div class="next-row"><span>${esc(wp.name)}</span><b>${wp.km - S.km} km</b></div>`).join('');
+    } else {
+      nextCard.hidden = true;
+    }
   }
 
   function setMarkerIcon(icon) {
     document.querySelector('.map-marker-icon').textContent = icon;
+  }
+
+  function showMapBubble(text) {
+    const pos = E.positionOnRoute(S.km);
+    const bubble = $('map-bubble');
+    const { left, top } = mapPct(pos.mapX, pos.mapY);
+    bubble.style.left = left; bubble.style.top = top;
+    bubble.textContent = text;
+    bubble.hidden = false;
+    bubble.style.opacity = '1';
+    clearTimeout(bubble._hideTimer);
+    bubble._hideTimer = setTimeout(() => { bubble.style.opacity = '0'; }, 1100);
   }
 
   // ---------- question flow ----------
@@ -177,6 +225,7 @@
     saveState();
     setMarkerIcon(tier.icon);
     renderRoute();
+    showMapBubble(`${tier.icon} +${tier.km} km`);
 
     const fb = $('feedback');
     fb.hidden = false;
@@ -213,6 +262,27 @@
     const list = (await Scores.list({ game: 'cesta', mode: 'daily', day: S.day })).sort((a, b) => a.score - b.score);
     const posRank = list.findIndex(x => x.player === Scores.getPlayer() && x.score === entry.score) + 1;
     if (posRank > 0 && list.length > 1) $('win-rank').textContent = `Danas si ${posRank}. od ${list.length}.`;
+    renderHistogram(list, entry);
+  }
+
+  // Bar chart of today's km results in 100 km buckets, with the player's own bucket marked "TI".
+  function renderHistogram(list, myEntry) {
+    const box = $('win-histogram');
+    if (list.length < 2) { box.hidden = true; return; }
+    const bucketSize = 100;
+    const maxKm = Math.max(E.GOAL_KM, ...list.map(s => s.km));
+    const bucketCount = Math.ceil((maxKm + 1) / bucketSize);
+    const counts = new Array(bucketCount).fill(0);
+    for (const s of list) counts[Math.min(bucketCount - 1, Math.floor(s.km / bucketSize))]++;
+    const myBucket = Math.min(bucketCount - 1, Math.floor(myEntry.km / bucketSize));
+    const maxCount = Math.max(...counts);
+    const bars = $('histogram-bars');
+    bars.innerHTML = counts.map((c, i) => {
+      const h = maxCount ? Math.max(3, Math.round((c / maxCount) * 66)) : 3;
+      const isMe = i === myBucket;
+      return `<div class="histogram-bar${isMe ? ' me' : ''}" style="height:${h}px" title="${i * bucketSize}-${(i + 1) * bucketSize} km: ${c}">${isMe ? '<span class="me-tag">TI</span>' : ''}</div>`;
+    }).join('');
+    box.hidden = false;
   }
 
   // ---------- leaderboard ----------
