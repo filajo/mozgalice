@@ -1,7 +1,7 @@
 // Logic for the hub page's "Statistika" tab: combines stats across all games.
 (function () {
   const $ = id => document.getElementById(id);
-  const GAME_NAMES = { sudoku: 'Sudoku', krizaljka: 'Križaljka' };
+  const GAME_NAMES = { sudoku: 'Sudoku', krizaljka: 'Križaljka', cesta: 'Cesta' };
   const fmt = s => { s = Math.max(0, Math.round(s)); const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, x = String(s % 60).padStart(2, '0'); return h ? `${h}:${String(m).padStart(2, '0')}:${x}` : `${m}:${x}`; };
   const todayStr = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
   function weekDays() {
@@ -34,16 +34,19 @@
     const filtered = all.filter(inRange);
 
     const totalSeconds = filtered.reduce((a, s) => a + s.seconds, 0);
+    // "Cesta" scores aren't time-based (lower score = more km, not fewer seconds), so it's left
+    // out of the seconds-based best/average tiles below and reported via its own per-game row.
+    const timeBased = filtered.filter(s => s.game !== 'cesta');
     const tiles = [
       ['Riješeno', filtered.length, 'zagonetki'],
       ['Vrijeme igre', fmt(totalSeconds), 'ukupno'],
     ];
     if (range === 'all') {
       tiles.push(['Dani igranja', new Set(filtered.map(s => s.day)).size, 'dana s rezultatom']);
-      tiles.push(['Najbolji rezultat', filtered.length ? fmt(Math.min(...filtered.map(s => s.score))) : '–', 'svih igara']);
+      tiles.push(['Najbolji rezultat', timeBased.length ? fmt(Math.min(...timeBased.map(s => s.score))) : '–', 'svih igara']);
     } else {
-      tiles.push(['Najbolji rezultat', filtered.length ? fmt(Math.min(...filtered.map(s => s.score))) : '–', '']);
-      tiles.push(['Prosjek', filtered.length ? fmt(totalSeconds / filtered.length) : '–', 'po zagonetki']);
+      tiles.push(['Najbolji rezultat', timeBased.length ? fmt(Math.min(...timeBased.map(s => s.score))) : '–', '']);
+      tiles.push(['Prosjek', timeBased.length ? fmt(totalSeconds / timeBased.length) : '–', 'po zagonetki']);
     }
     $('stats-totals').innerHTML = tiles.map(([label, val, sub]) => `<div class="totals-tile"><strong>${val}</strong><span>${label}${sub ? ' · ' + sub : ''}</span></div>`).join('');
 
@@ -53,7 +56,10 @@
     const g = document.createElement('div'); g.className = 'score-group';
     g.innerHTML = '<h3>Po igri</h3>' + games.map(game => {
       const mine = filtered.filter(s => s.game === game);
-      const sub = mine.length ? `riješeno ${mine.length} · najbolje ${fmt(Math.min(...mine.map(s => s.score)))}` : 'još ništa u ovom razdoblju';
+      if (!mine.length) return `<div class="score-row"><span class="name">${esc(GAME_NAMES[game] || game)}<div class="sub">još ništa u ovom razdoblju</div></span></div>`;
+      const sub = game === 'cesta'
+        ? `odigrano ${mine.length} · najdalje ${Math.max(...mine.map(s => s.km))} km`
+        : `riješeno ${mine.length} · najbolje ${fmt(Math.min(...mine.map(s => s.score)))}`;
       return `<div class="score-row"><span class="name">${esc(GAME_NAMES[game] || game)}<div class="sub">${sub}</div></span></div>`;
     }).join('');
     body.innerHTML = '';

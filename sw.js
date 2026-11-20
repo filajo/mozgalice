@@ -1,5 +1,5 @@
 // Offline cache. Bump VERSION whenever any file changes so phones pick up the update.
-const VERSION = 'v10';
+const VERSION = 'v11';
 const CACHE = 'mozgalice-' + VERSION;
 const FILES = [
   './',
@@ -24,7 +24,13 @@ const FILES = [
   'games/krizaljka/krizaljka.css',
   'games/krizaljka/krizaljka.js',
   'games/krizaljka/engine.js',
-  'games/krizaljka/words.js'
+  'games/krizaljka/words.js',
+  'games/cesta/',
+  'games/cesta/index.html',
+  'games/cesta/cesta.css',
+  'games/cesta/cesta.js',
+  'games/cesta/engine.js',
+  'games/cesta/questions.js'
 ];
 
 self.addEventListener('install', e => {

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#3b5bdb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mozgalice">
+<title>Cesta · Mozgalice</title>
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="icon" href="../../icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+<link rel="stylesheet" href="../../css/common.css">
+<link rel="stylesheet" href="cesta.css">
+</head>
+<body>
+<div class="app">
+  <!-- MENU -->
+  <section id="menu" class="screen">
+    <header class="topbar">
+      <a class="icon-btn" href="../../" aria-label="Natrag">‹</a>
+      <h1>Cesta</h1>
+      <button class="icon-btn" id="btn-scores" aria-label="Ljestvica">🏆</button>
+    </header>
+
+    <label class="player">
+      <span class="muted">Ime igrača</span>
+      <input id="player" maxlength="20" placeholder="npr. Filip" autocomplete="off">
+    </label>
+
+    <button id="btn-continue" class="big-btn primary" hidden>Nastavi igru <small id="continue-info"></small></button>
+
+    <h2>Dnevni kviz</h2>
+    <p class="muted small">8 pitanja, isto za sve igrače danas. Brži odgovor = veća udaljenost. Cilj: od Vukovara do Dubrovnika.</p>
+    <button id="btn-daily" class="big-btn primary">Igraj</button>
+    <p class="muted small" id="daily-done" hidden></p>
+  </section>
+
+  <!-- GAME -->
+  <section id="game" class="screen" hidden>
+    <header class="topbar">
+      <button class="icon-btn" id="btn-menu" aria-label="Izbornik">‹</button>
+      <div class="game-info">
+        <strong id="info-q">1 / 8</strong>
+        <span class="muted small" id="info-group"></span>
+      </div>
+      <span class="icon-btn"></span>
+    </header>
+
+    <div class="route-wrap">
+      <div class="route-track"><div class="route-fill" id="route-fill"></div><div class="route-dot" id="route-dot">🚗</div></div>
+      <div class="route-labels"><span id="route-from">Vukovar</span><span id="route-to">Dubrovnik</span></div>
+      <p class="muted small" id="route-km">0 km</p>
+    </div>
+
+    <div class="qcard">
+      <div class="qtimer-wrap"><div class="qtimer-fill" id="qtimer-fill"></div></div>
+      <p class="muted small" id="q-group"></p>
+      <h2 id="q-text"></h2>
+      <input id="q-input" class="q-input" placeholder="Tvoj odgovor…" autocomplete="off" autocorrect="off" spellcheck="false">
+      <button id="btn-answer" class="big-btn primary">Potvrdi</button>
+    </div>
+
+    <!-- shown briefly after each answer -->
+    <div id="feedback" class="feedback" hidden>
+      <div class="feedback-icon" id="feedback-icon"></div>
+      <div class="feedback-text">
+        <strong id="feedback-title"></strong>
+        <span class="muted small" id="feedback-sub"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCORES -->
+  <section id="scores" class="screen" hidden>
+    <header class="topbar">
+      <button class="icon-btn" id="btn-scores-back" aria-label="Natrag">‹</button>
+      <h1>Ljestvica</h1>
+      <span class="icon-btn"></span>
+    </header>
+    <div class="tabs" id="score-tabs">
+      <button data-tab="today" class="active">Danas</button>
+      <button data-tab="stats">Ukupno</button>
+    </div>
+    <p class="muted small" id="score-note"></p>
+    <div id="score-body"></div>
+  </section>
+</div>
+
+<!-- WIN DIALOG -->
+<div id="win" class="overlay" hidden>
+  <div class="dialog">
+    <div class="trophy" id="win-trophy">🏁</div>
+    <h2 id="win-title">Gotovo!</h2>
+    <p id="win-summary"></p>
+    <div class="win-stats">
+      <div><b id="win-km"></b><span>km</span></div>
+      <div><b id="win-correct"></b><span>točno</span></div>
+      <div><b id="win-score-points"></b><span>bodovi</span></div>
+    </div>
+    <p class="muted small" id="win-rank"></p>
+    <button class="big-btn primary" id="btn-win-new">Izbornik</button>
+    <button class="big-btn" id="btn-win-scores">Ljestvica</button>
+  </div>
+</div>
+
+<!-- CONFIRM DIALOG -->
+<div id="confirm" class="overlay" hidden>
+  <div class="dialog">
+    <p id="confirm-text"></p>
+    <button id="confirm-yes" class="big-btn primary">Da</button>
+    <button id="confirm-no" class="big-btn">Ne</button>
+  </div>
+</div>
+
+<script src="../../js/config.js"></script>
+<script src="../../js/scores.js"></script>
+<script src="questions.js"></script>
+<script src="engine.js"></script>
+<script src="cesta.js"></script>
+<script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('../../sw.js', { scope: '../../' });</script>
+</body>
+</html>

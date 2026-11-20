@@ -1,0 +1,77 @@
+// Question bank for "Cesta": short trivia questions grouped into 4 themes.
+// Each day picks 2 questions per theme (8 total), same for every player, via engine.js.
+// a: array of accepted answers (diacritic/case/typo-tolerant matching is done in engine.js).
+window.CESTA_QUESTIONS = {
+  hrvatska: [
+    { q: 'Glavni grad Hrvatske?', a: ['zagreb'] },
+    { q: 'Trenutna službena valuta Hrvatske?', a: ['euro'] },
+    { q: 'Najduža rijeka koja teče Hrvatskom?', a: ['sava'] },
+    { q: 'U kojem je mjestu rođen Nikola Tesla?', a: ['smiljan'] },
+    { q: 'Nacionalni park sa slapovima i jezerima u Lici?', a: ['plitvička jezera', 'plitvice'] },
+    { q: 'Koji je najveći grad u Dalmaciji?', a: ['split'] },
+    { q: 'Koji rimski car je dao sagraditi palaču u Splitu?', a: ['dioklecijan'] },
+    { q: 'Koji je hrvatski nogometaš osvojio Zlatnu loptu 2018. godine?', a: ['modrić', 'modric', 'luka modrić'] },
+    { q: 'U kojem se hrvatskom gradu nalazi ulica Stradun?', a: ['dubrovnik'] },
+    { q: 'Poluotok na zapadu Hrvatske, poznat po maslinama i tartufima?', a: ['istra'] },
+    { q: 'Koja hrvatska rijeka prolazi kroz grad Zagreb?', a: ['sava'] },
+    { q: 'Koji je najveći hrvatski otok po broju stanovnika?', a: ['krk'] },
+    { q: 'Kako se zove planina iznad grada Splita?', a: ['mosor'] },
+    { q: 'Koji hrvatski grad je poznat po adventskoj manifestaciji, više puta nagrađenoj u Europi?', a: ['zagreb'] },
+    { q: 'Rijeka koja čini dio granice između Hrvatske i Srbije kod Vukovara?', a: ['dunav'] },
+    { q: 'Hrvatski predsjednik od 2020. godine?', a: ['milanović', 'milanovic', 'zoran milanović'] }
+  ],
+  svijet: [
+    { q: 'Glavni grad Francuske?', a: ['pariz'] },
+    { q: 'Glavni grad Japana?', a: ['tokio'] },
+    { q: 'Najveći ocean na Zemlji?', a: ['tihi ocean', 'pacifik'] },
+    { q: 'Najviša planina na svijetu?', a: ['mount everest', 'everest'] },
+    { q: 'Koja europska država ima oblik čizme?', a: ['italija'] },
+    { q: 'Glavni grad Rusije?', a: ['moskva'] },
+    { q: 'Najveća država na svijetu po površini?', a: ['rusija'] },
+    { q: 'Koji je najveći kontinent na Zemlji?', a: ['azija'] },
+    { q: 'Glavni grad Egipta?', a: ['kairo'] },
+    { q: 'Rijeka koja prolazi kroz Egipat?', a: ['nil'] },
+    { q: 'Glavni grad SAD-a?', a: ['washington', 'washington dc'] },
+    { q: 'Najveća vruća pustinja na svijetu?', a: ['sahara'] },
+    { q: 'Glavni grad Velike Britanije?', a: ['london'] },
+    { q: 'Najmnogoljudnija država na svijetu?', a: ['indija'] },
+    { q: 'Glavni grad Njemačke?', a: ['berlin'] },
+    { q: 'Najduži zid na svijetu, nalazi se u Kini?', a: ['kineski zid'] }
+  ],
+  priroda: [
+    { q: 'Koji je kemijski simbol za zlato?', a: ['au'] },
+    { q: 'Koja je najveća životinja na Zemlji?', a: ['plavi kit'] },
+    { q: 'Koliko kostiju ima odrasli čovjek?', a: ['206'] },
+    { q: 'Koji je planet najbliži Suncu?', a: ['merkur'] },
+    { q: 'Kemijska oznaka za vodu?', a: ['h2o'] },
+    { q: 'Koja je životinja najbrža na kopnu?', a: ['gepard'] },
+    { q: 'Koliko srca ima hobotnica?', a: ['3', 'tri'] },
+    { q: 'Koji plin čini najviše udisanog zraka?', a: ['dušik', 'dusik'] },
+    { q: 'Najveća ptica na svijetu koja ne leti?', a: ['noj'] },
+    { q: 'Koliko je planeta u Sunčevom sustavu?', a: ['8', 'osam'] },
+    { q: 'Koji organ u tijelu pumpa krv?', a: ['srce'] },
+    { q: 'Koja životinja mijenja boju kože radi kamuflaže?', a: ['kameleon'] },
+    { q: 'Kemijski simbol za kisik?', a: ['o'] },
+    { q: 'Najveća riba na svijetu?', a: ['kitopsina', 'kit morski pas'] },
+    { q: 'Koliko minuta (okvirno) treba svjetlosti sa Sunca da stigne do Zemlje?', a: ['8', 'osam'] },
+    { q: 'Najtvrđi prirodni materijal na Zemlji?', a: ['dijamant'] }
+  ],
+  zabava: [
+    { q: 'Koji je nogometni klub osvojio najviše Liga prvaka?', a: ['real madrid'] },
+    { q: 'Glavni junak Disneyjevog filma "Kralj lavova"?', a: ['simba'] },
+    { q: 'Koliko igrača ima nogometna momčad na terenu?', a: ['11', 'jedanaest'] },
+    { q: 'Redatelj prvog filma iz serijala "Zvjezdani ratovi"?', a: ['george lucas', 'lucas'] },
+    { q: 'Koji sport se igra na Wimbledonu?', a: ['tenis'] },
+    { q: 'Tko pjeva pjesmu "Thriller"?', a: ['michael jackson', 'jackson'] },
+    { q: 'Disneyjev crtani miš, poznata maskota?', a: ['mickey mouse', 'mickey'] },
+    { q: 'Koliko igrača ima košarkaška momčad na terenu?', a: ['5', 'pet'] },
+    { q: 'Koji glumac glumi Iron Mana u Marvel filmovima?', a: ['robert downey jr', 'downey'] },
+    { q: 'Koja je država pobijedila na Svjetskom prvenstvu u nogometu 2022.?', a: ['argentina'] },
+    { q: 'Tko je autor romana o "Harryju Potteru"?', a: ['jk rowling', 'rowling'] },
+    { q: 'Najpopularniji sport na svijetu po broju gledatelja?', a: ['nogomet'] },
+    { q: 'Glavni lik u videoigri "Super Mario"?', a: ['mario'] },
+    { q: 'Koja boja pojasa je najviša u judu i karateu?', a: ['crni', 'crna'] },
+    { q: 'Koja država je domaćin Zimskih olimpijskih igara 2026.?', a: ['italija'] },
+    { q: 'Koliko igrača ima odbojkaška momčad na terenu?', a: ['6', 'šest', 'sest'] }
+  ]
+};

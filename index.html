@@ -49,6 +49,16 @@
         </span>
         <span class="chev" aria-hidden="true">›</span>
       </a>
+      <a class="game-card" href="games/cesta/">
+        <span class="game-icon" aria-hidden="true">
+          <svg viewBox="0 0 30 30"><g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="28" height="28" rx="3"/><path d="M15 3v5M15 11v5M15 19v5M15 27v2" stroke-dasharray="4 3"/></g><circle cx="15" cy="7" r="2.2" fill="currentColor" stroke="none"/><circle cx="15" cy="23" r="2.2" fill="currentColor" stroke="none"/></svg>
+        </span>
+        <span class="game-text">
+          <strong>Cesta</strong>
+          <span class="muted" id="cesta-sub">Dnevni kviz: Vukovar → Dubrovnik</span>
+        </span>
+        <span class="chev" aria-hidden="true">›</span>
+      </a>
       <div class="game-card soon" aria-disabled="true">
         <span class="game-icon" aria-hidden="true">＋</span>
         <span class="game-text"><strong>Uskoro još igara</strong><span class="muted">Pamćenje, logika, brojevi…</span></span>
@@ -84,6 +94,10 @@
   try {
     const k = JSON.parse(localStorage.getItem('krizaljka.state') || 'null');
     if (k && !k.won) document.getElementById('krizaljka-sub').textContent = 'Nastavi započetu križaljku';
+  } catch (e) {}
+  try {
+    const c = JSON.parse(localStorage.getItem('cesta.state') || 'null');
+    if (c && !c.won) document.getElementById('cesta-sub').textContent = 'Nastavi započeti kviz';
   } catch (e) {}
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
