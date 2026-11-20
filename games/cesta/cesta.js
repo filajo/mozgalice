@@ -80,6 +80,7 @@
   function resume(st) {
     S = st;
     show('game');
+    setMarkerIcon('🚗');
     renderRoute();
     showQuestion();
   }
@@ -95,15 +96,36 @@
     show('menu'); renderMenu();
   }
 
-  // ---------- route ----------
+  // ---------- route / map ----------
+  let waypointsBuilt = false;
+  function buildWaypoints() {
+    const g = $('map-waypoints');
+    g.innerHTML = '';
+    for (const wp of E.ROUTE) {
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.setAttribute('cx', wp.map.x); dot.setAttribute('cy', wp.map.y); dot.setAttribute('r', 4);
+      dot.setAttribute('class', 'map-waypoint'); dot.dataset.km = wp.km;
+      g.appendChild(dot);
+      const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      label.setAttribute('x', wp.map.x + 7); label.setAttribute('y', wp.map.y + (wp.labelDy ?? 3));
+      label.setAttribute('class', 'map-label'); label.textContent = wp.name;
+      g.appendChild(label);
+    }
+    waypointsBuilt = true;
+  }
+
   function renderRoute() {
+    if (!waypointsBuilt) buildWaypoints();
     const pos = E.positionOnRoute(S.km);
-    const pct = Math.min(100, (S.km / E.GOAL_KM) * 100);
-    $('route-fill').style.width = pct + '%';
-    $('route-dot').style.left = pct + '%';
-    $('route-from').textContent = E.ROUTE[0].name;
-    $('route-to').textContent = E.ROUTE[E.ROUTE.length - 1].name;
+    for (const dot of $('map-waypoints').querySelectorAll('.map-waypoint')) {
+      dot.classList.toggle('passed', S.km >= +dot.dataset.km);
+    }
+    $('map-marker').setAttribute('transform', `translate(${pos.mapX},${pos.mapY})`);
     $('route-km').textContent = `${S.km} / ${E.GOAL_KM} km · trenutno kod: ${pos.to ? pos.from + ' → ' + pos.to : pos.from}`;
+  }
+
+  function setMarkerIcon(icon) {
+    document.querySelector('.map-marker-icon').textContent = icon;
   }
 
   // ---------- question flow ----------
@@ -153,6 +175,7 @@
     S.km += tier.km;
     if (correct) S.correct++; else S.mistakes++;
     saveState();
+    setMarkerIcon(tier.icon);
     renderRoute();
 
     const fb = $('feedback');

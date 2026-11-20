@@ -1,5 +1,5 @@
 // Offline cache. Bump VERSION whenever any file changes so phones pick up the update.
-const VERSION = 'v11';
+const VERSION = 'v12';
 const CACHE = 'mozgalice-' + VERSION;
 const FILES = [
   './',

@@ -48,26 +48,36 @@
       <span class="icon-btn"></span>
     </header>
 
-    <div class="route-wrap">
-      <div class="route-track"><div class="route-fill" id="route-fill"></div><div class="route-dot" id="route-dot">🚗</div></div>
-      <div class="route-labels"><span id="route-from">Vukovar</span><span id="route-to">Dubrovnik</span></div>
-      <p class="muted small" id="route-km">0 km</p>
-    </div>
+    <div class="game-layout">
+      <div class="route-wrap">
+        <svg id="route-map" viewBox="0 0 320 340" aria-label="Mapa Hrvatske s rutom Vukovar - Dubrovnik">
+          <path id="map-land" d="M285,55 L250,75 L260,45 L210,90 L120,100 L100,130 L85,170 L100,215 L108,245 L118,270 L128,295 L140,320 L148,335"
+            fill="none" stroke="var(--accent-softer)" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/>
+          <path id="map-road" d="M285,55 L250,75 L260,45 L210,90 L120,100 L100,130 L85,170 L100,215 L108,245 L118,270 L128,295 L140,320 L148,335"
+            fill="none" stroke="var(--line-strong)" stroke-width="2.5" stroke-dasharray="6 5"/>
+          <g id="map-waypoints"></g>
+          <g id="map-marker"><text class="map-marker-icon" text-anchor="middle" dy=".35em">🚗</text></g>
+        </svg>
+        <p class="muted small" id="route-km">0 km</p>
+      </div>
 
-    <div class="qcard">
-      <div class="qtimer-wrap"><div class="qtimer-fill" id="qtimer-fill"></div></div>
-      <p class="muted small" id="q-group"></p>
-      <h2 id="q-text"></h2>
-      <input id="q-input" class="q-input" placeholder="Tvoj odgovor…" autocomplete="off" autocorrect="off" spellcheck="false">
-      <button id="btn-answer" class="big-btn primary">Potvrdi</button>
-    </div>
+      <div class="game-main">
+        <div class="qcard">
+          <div class="qtimer-wrap"><div class="qtimer-fill" id="qtimer-fill"></div></div>
+          <p class="muted small" id="q-group"></p>
+          <h2 id="q-text"></h2>
+          <input id="q-input" class="q-input" placeholder="Tvoj odgovor…" autocomplete="off" autocorrect="off" spellcheck="false">
+          <button id="btn-answer" class="big-btn primary">Potvrdi</button>
+        </div>
 
-    <!-- shown briefly after each answer -->
-    <div id="feedback" class="feedback" hidden>
-      <div class="feedback-icon" id="feedback-icon"></div>
-      <div class="feedback-text">
-        <strong id="feedback-title"></strong>
-        <span class="muted small" id="feedback-sub"></span>
+        <!-- shown briefly after each answer -->
+        <div id="feedback" class="feedback" hidden>
+          <div class="feedback-icon" id="feedback-icon"></div>
+          <div class="feedback-text">
+            <strong id="feedback-title"></strong>
+            <span class="muted small" id="feedback-sub"></span>
+          </div>
+        </div>
       </div>
     </div>
   </section>

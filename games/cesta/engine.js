@@ -3,13 +3,22 @@
   const GROUPS = ['hrvatska', 'svijet', 'priroda', 'zabava'];
   const GROUP_LABELS = { hrvatska: 'Hrvatska', svijet: 'Svijet', priroda: 'Priroda i znanost', zabava: 'Zabava i sport' };
 
-  // Real road waypoints Vukovar → Dubrovnik, with their own (approximate) cumulative km.
+  // Real road waypoints Vukovar → Dubrovnik, with their own (approximate) cumulative km,
+  // and a stylized position on the map SVG's 320x340 viewBox (same points as its road path).
   const ROUTE = [
-    { name: 'Vukovar', km: 0 }, { name: 'Đakovo', km: 50 }, { name: 'Osijek', km: 90 },
-    { name: 'Slavonski Brod', km: 160 }, { name: 'Zagreb', km: 260 }, { name: 'Karlovac', km: 300 },
-    { name: 'Gospić', km: 380 }, { name: 'Zadar', km: 460 }, { name: 'Šibenik', km: 520 },
-    { name: 'Split', km: 580 }, { name: 'Makarska', km: 650 }, { name: 'Ston', km: 760 },
-    { name: 'Dubrovnik', km: 900 }
+    { name: 'Vukovar', km: 0, map: { x: 285, y: 55 }, labelDy: 10 },
+    { name: 'Đakovo', km: 50, map: { x: 250, y: 75 } },
+    { name: 'Osijek', km: 90, map: { x: 260, y: 45 }, labelDy: -6 },
+    { name: 'Slavonski Brod', km: 160, map: { x: 210, y: 90 } },
+    { name: 'Zagreb', km: 260, map: { x: 120, y: 100 } },
+    { name: 'Karlovac', km: 300, map: { x: 100, y: 130 } },
+    { name: 'Gospić', km: 380, map: { x: 85, y: 170 } },
+    { name: 'Zadar', km: 460, map: { x: 100, y: 215 } },
+    { name: 'Šibenik', km: 520, map: { x: 108, y: 245 } },
+    { name: 'Split', km: 580, map: { x: 118, y: 270 } },
+    { name: 'Makarska', km: 650, map: { x: 128, y: 295 } },
+    { name: 'Ston', km: 760, map: { x: 140, y: 320 } },
+    { name: 'Dubrovnik', km: 900, map: { x: 148, y: 335 } }
   ];
   const GOAL_KM = ROUTE[ROUTE.length - 1].km;
 
@@ -62,17 +71,21 @@
     return false;
   }
 
-  // Position along the route for a given km, for drawing progress.
+  // Position along the route for a given km, for drawing progress (including a map x/y,
+  // linearly interpolated between the two waypoints the traveller is currently between).
   function positionOnRoute(km) {
     const clamped = Math.max(0, Math.min(GOAL_KM, km));
     for (let i = 1; i < ROUTE.length; i++) {
       if (clamped <= ROUTE[i].km) {
-        const prev = ROUTE[i - 1];
-        const frac = (clamped - prev.km) / (ROUTE[i].km - prev.km || 1);
-        return { from: prev.name, to: ROUTE[i].name, frac, reached: ROUTE[i - 1] };
+        const prev = ROUTE[i - 1], next = ROUTE[i];
+        const frac = (clamped - prev.km) / (next.km - prev.km || 1);
+        const mapX = prev.map.x + (next.map.x - prev.map.x) * frac;
+        const mapY = prev.map.y + (next.map.y - prev.map.y) * frac;
+        return { from: prev.name, to: next.name, frac, reached: prev, mapX, mapY };
       }
     }
-    return { from: ROUTE[ROUTE.length - 1].name, to: null, frac: 1, reached: ROUTE[ROUTE.length - 1] };
+    const last = ROUTE[ROUTE.length - 1];
+    return { from: last.name, to: null, frac: 1, reached: last, mapX: last.map.x, mapY: last.map.y };
   }
 
   global.CestaEngine = { pickDaily, isCorrect, normalize, ROUTE, GOAL_KM, positionOnRoute, GROUP_LABELS };

@@ -20,15 +20,17 @@ h2 { font-size: 17px; margin: 22px 0 4px; }
 
 .game-info { display: flex; flex-direction: column; align-items: center; line-height: 1.2; }
 
+.game-layout { display: flex; flex-direction: column; }
+.game-main { display: contents; }
+
 .route-wrap { margin: 6px 0 14px; }
-.route-track { position: relative; height: 10px; background: var(--line); border-radius: 6px; overflow: visible; }
-.route-fill { position: absolute; inset: 0; width: 0%; background: var(--accent); border-radius: 6px; transition: width .6s ease; }
-.route-dot {
-  position: absolute; top: 50%; left: 0%; transform: translate(-50%, -50%); font-size: 20px;
-  transition: left .6s ease;
-}
-.route-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 6px; }
-#route-km { text-align: center; margin: 4px 0 0; }
+#route-map { width: 100%; height: auto; max-height: 220px; display: block; background: var(--surface); border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.map-waypoint { fill: var(--line-strong); transition: fill .4s ease; }
+.map-waypoint.passed { fill: var(--ok); }
+.map-label { font-size: 9px; fill: var(--muted); font-family: inherit; }
+#map-marker { transition: transform .7s ease; }
+.map-marker-icon { font-size: 15px; }
+#route-km { text-align: center; margin: 6px 0 0; }
 
 .qcard { background: var(--surface); border-radius: 16px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
 .qtimer-wrap { height: 5px; background: var(--line); border-radius: 3px; overflow: hidden; margin-bottom: 12px; }
@@ -54,7 +56,11 @@ h2 { font-size: 17px; margin: 22px 0 4px; }
 @media (orientation: landscape) and (max-height: 500px) {
   .screen { padding: 6px 10px 10px; }
   .app { max-width: none; }
-  .route-wrap { margin: 2px 0 8px; }
+  .game-layout { flex-direction: row; align-items: flex-start; gap: 14px; }
+  .route-wrap { margin: 0; flex: none; width: min(42vh, 36vw); }
+  #route-map { max-height: none; }
+  #route-km { font-size: 11px; }
+  .game-main { display: flex; flex-direction: column; flex: 1; min-width: 0; }
   .qcard { padding: 10px 16px; }
   .qcard h2 { margin: 2px 0 10px; font-size: 16px; }
   .feedback { padding: 10px 16px; margin-top: 8px; }
