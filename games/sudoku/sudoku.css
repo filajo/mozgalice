@@ -36,7 +36,7 @@ h2 { font-size: 17px; margin: 22px 0 4px; }
 
 .board-wrap { position: relative; }
 .board {
-  display: grid; grid-template-columns: repeat(9, 1fr); aspect-ratio: 1;
+  display: grid; grid-template-columns: repeat(9, 1fr); grid-template-rows: repeat(9, 1fr); aspect-ratio: 1;
   background: var(--surface); border: 2px solid var(--line-strong); border-radius: 8px; overflow: hidden;
   touch-action: manipulation;
 }
