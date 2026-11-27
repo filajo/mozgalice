@@ -36,6 +36,12 @@
   const saveState = () => { if (S) localStorage.setItem(STATE_KEY, JSON.stringify(S)); };
   const loadState = () => { try { return JSON.parse(localStorage.getItem(STATE_KEY) || 'null'); } catch (e) { return null; } };
   const dailyDoneKey = (day, level) => `sudoku.daily.${day}.${level}`;
+  // Hidden bonus puzzle: one extra "Stručnjak" sudoku that appears only after all of today's daily levels are solved.
+  const BONUS_LEVEL = 'expert';
+  const bonusDoneKey = day => `sudoku.bonus.${day}`;
+  const allDailyDone = day => Object.keys(LEVELS).every(k => localStorage.getItem(dailyDoneKey(day, k)));
+  const isDayBound = st => st.mode === 'daily' || st.mode === 'bonus';
+  const modeLabel = mode => mode === 'daily' ? 'Dnevni izazov' : mode === 'bonus' ? 'Skrivena zagonetka' : 'Slobodna igra';
 
   // ---------- screens ----------
   function show(id) {
@@ -47,9 +53,9 @@
   function renderMenu() {
     $('player').value = Scores.getPlayer();
     const st = loadState();
-    const canContinue = st && !st.won && !(st.mode === 'daily' && st.day !== today());
+    const canContinue = st && !st.won && !(isDayBound(st) && st.day !== today());
     $('btn-continue').hidden = !canContinue;
-    if (canContinue) $('continue-info').textContent = `${st.mode === 'daily' ? 'Dnevni izazov' : 'Slobodna igra'} · ${LEVELS[st.level].label} · ${fmt(st.seconds)}`;
+    if (canContinue) $('continue-info').textContent = `${modeLabel(st.mode)} · ${LEVELS[st.level].label} · ${fmt(st.seconds)}`;
 
     const d = today();
     $('daily-levels').innerHTML = ''; $('free-levels').innerHTML = '';
@@ -67,7 +73,19 @@
       f.onclick = () => startGame('free', key);
       $('free-levels').appendChild(f);
     }
+    renderBonus(d);
     renderSideStats();
+  }
+
+  function renderBonus(d) {
+    const box = $('bonus');
+    box.hidden = !allDailyDone(d);
+    if (box.hidden) return;
+    const done = JSON.parse(localStorage.getItem(bonusDoneKey(d)) || 'null');
+    const b = $('btn-bonus');
+    b.className = 'level-btn bonus-btn' + (done ? ' done' : '');
+    b.innerHTML = `<strong>★ ${LEVELS[BONUS_LEVEL].label}</strong><span>${done ? '✓ ' + fmt(done.score) + ' · Bravo, sada možeš odmoriti' : 'Igraj skrivenu zagonetku'}</span>`;
+    b.onclick = () => done ? openScores('today') : startGame('bonus', BONUS_LEVEL);
   }
 
   async function renderSideStats() {
@@ -87,16 +105,18 @@
   // ---------- game ----------
   async function startGame(mode, level) {
     const st = loadState();
-    if (mode === 'daily' && st && !st.won && st.mode === 'daily' && st.level === level && st.day === today()) {
-      return resume(st); // same daily already in progress
+    if (isDayBound({ mode }) && st && !st.won && st.mode === mode && st.level === level && st.day === today()) {
+      return resume(st); // same daily (or today's bonus) already in progress
     }
+    if (mode === 'bonus' && !allDailyDone(today())) return; // still hidden
     if (st && !st.won) {
       const ok = await UI.confirm('Imaš nezavršenu igru. Ako započneš novu, ta igra se gubi (ne broji se u statistiku). Nastaviti?');
       if (!ok) return;
     }
     if (!ensurePlayer()) return;
     const day = today();
-    const g = E.generate(level, mode === 'daily' ? `${day}:${level}` : null);
+    const seed = mode === 'daily' ? `${day}:${level}` : mode === 'bonus' ? `${day}:bonus` : null;
+    const g = E.generate(level, seed);
     S = {
       mode, level, day,
       puzzle: g.puzzle, solution: g.solution, values: g.puzzle.slice(),
@@ -119,7 +139,7 @@
   function resume(st) {
     S = st; selected = -1; notesMode = false;
     $('info-level').textContent = LEVELS[S.level].label;
-    $('info-mode').textContent = S.mode === 'daily' ? `Dnevni izazov · ${fmtDay(S.day)}` : 'Slobodna igra';
+    $('info-mode').textContent = isDayBound(S) ? `${modeLabel(S.mode)} · ${fmtDay(S.day)}` : modeLabel(S.mode);
     $('paused').hidden = true;
     show('game');
     renderBoard();
@@ -292,7 +312,11 @@
     saveState();
     const entry = { game: 'sudoku', mode: S.mode, level: S.level, day: S.day, seconds: S.seconds, mistakes: S.mistakes, hints: S.hints, score };
     if (S.mode === 'daily') localStorage.setItem(dailyDoneKey(S.day, S.level), JSON.stringify(entry));
-    $('win-summary').textContent = `${S.mode === 'daily' ? 'Dnevni izazov' : 'Slobodna igra'} · ${LEVELS[S.level].label}`;
+    if (S.mode === 'bonus') localStorage.setItem(bonusDoneKey(S.day), JSON.stringify(entry));
+    const bonus = S.mode === 'bonus';
+    $('win-trophy').textContent = bonus ? '🌟' : '🎉';
+    $('win-title').textContent = bonus ? 'Bravo, sada možeš odmoriti' : 'Riješeno!';
+    $('win-summary').textContent = `${modeLabel(S.mode)} · ${LEVELS[S.level].label}`;
     $('win-time').textContent = fmt(S.seconds);
     $('win-points').textContent = fmt(score);
     $('win-score-points').textContent = pointsFor(entry);
@@ -301,8 +325,8 @@
       : 'Bez grešaka i bez pomoći. Bravo!';
     setTimeout(() => { $('win').hidden = false; }, 700);
     await Scores.submit(entry);
-    if (S.mode === 'daily') {
-      const list = (await Scores.list({ game: 'sudoku', mode: 'daily', day: S.day, level: S.level })).sort((a, b) => a.score - b.score);
+    if (isDayBound(S)) {
+      const list = (await Scores.list({ game: 'sudoku', mode: S.mode, day: S.day, level: S.level })).sort((a, b) => a.score - b.score);
       const pos = list.findIndex(x => x.player === Scores.getPlayer() && x.score === score) + 1;
       if (pos > 0 && list.length > 1) $('win-rank').textContent += ` Danas si ${pos}. od ${list.length}.`;
     }
@@ -347,6 +371,9 @@
       for (const [k, L] of Object.entries(LEVELS)) {
         group(`${L.label} · ${fmtDay(d)}`, all.filter(s => s.mode === 'daily' && s.day === d && s.level === k).sort((a, b) => a.score - b.score), detail);
       }
+      // The bonus group stays hidden until this phone has unlocked it (or someone has already solved it today).
+      const bonusRows = all.filter(s => s.mode === 'bonus' && s.day === d).sort((a, b) => a.score - b.score);
+      if (bonusRows.length || allDailyDone(d)) group(`★ Skrivena zagonetka · ${fmtDay(d)}`, bonusRows, detail);
     } else if (scoreTab === 'week') {
       const week = weekDays();
       for (const [k, L] of Object.entries(LEVELS)) {
@@ -407,6 +434,10 @@
     if (!ok) return;
     const entry = { game: btn.dataset.game, player: btn.dataset.player, at: btn.dataset.at };
     await Scores.remove(entry);
+    if (btn.dataset.mode === 'bonus') {
+      const done = JSON.parse(localStorage.getItem(bonusDoneKey(btn.dataset.day)) || 'null');
+      if (done && done.day === btn.dataset.day) localStorage.removeItem(bonusDoneKey(btn.dataset.day));
+    }
     if (btn.dataset.mode === 'daily') {
       const key = dailyDoneKey(btn.dataset.day, btn.dataset.level);
       const done = JSON.parse(localStorage.getItem(key) || 'null');
@@ -434,7 +465,7 @@
   $('btn-scores-back').onclick = () => { show('menu'); renderMenu(); };
   for (const b of $('score-tabs').children) b.onclick = () => openScores(b.dataset.tab);
   $('btn-win-new').onclick = () => { $('win').hidden = true; show('menu'); renderMenu(); };
-  $('btn-win-scores').onclick = () => { $('win').hidden = true; openScores(S.mode === 'daily' ? 'today' : 'best'); };
+  $('btn-win-scores').onclick = () => { $('win').hidden = true; openScores(isDayBound(S) ? 'today' : 'best'); };
 
   document.addEventListener('keydown', e => {
     if ($('game').hidden || !S || e.target.tagName === 'INPUT') return;
