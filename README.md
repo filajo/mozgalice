@@ -3,7 +3,7 @@
 Igre za vježbanje mozga, bez reklama. Web aplikacija (PWA) koja se s preglednika doda na početni zaslon mobitela (Android i iPhone) i radi i bez interneta.
 
 ## Igre
-- **Sudoku**: 4 razine (Lako, Srednje, Teško, Stručnjak), dnevni izazov (ista zagonetka za sve igrače), bilješke, poništi, pomoć, ljestvica.
+- **Sudoku**: 4 razine (Lako, Srednje, Teško, Stručnjak), dnevni izazov (ista zagonetka za sve igrače), skrivena bonus zagonetka (Stručnjak) koja se otključa kad su riješeni svi današnji izazovi, bilješke, poništi, pomoć, ljestvica.
 
 Rezultat = vrijeme + 30 s po grešci + 60 s po pomoći. Manje je bolje.
 

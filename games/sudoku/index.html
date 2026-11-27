@@ -53,6 +53,12 @@
     <p class="muted small">Ista zagonetka za sve igrače danas. Usporedite vrijeme!</p>
     <div class="level-grid" id="daily-levels"></div>
 
+    <div id="bonus" class="bonus" hidden>
+      <h2>Skrivena zagonetka</h2>
+      <p class="muted small">Riješio si sve današnje izazove! Otključana je još jedna, za prave stručnjake.</p>
+      <button class="level-btn bonus-btn" id="btn-bonus"></button>
+    </div>
+
     <h2>Slobodna igra</h2>
     <div class="level-grid" id="free-levels"></div>
   </section>
@@ -113,8 +119,8 @@
 <!-- WIN DIALOG -->
 <div id="win" class="overlay" hidden>
   <div class="dialog">
-    <div class="trophy">🎉</div>
-    <h2>Riješeno!</h2>
+    <div class="trophy" id="win-trophy">🎉</div>
+    <h2 id="win-title">Riješeno!</h2>
     <p id="win-summary"></p>
     <div class="win-stats">
       <div><b id="win-time"></b><span>vrijeme</span></div>
