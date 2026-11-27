@@ -1,5 +1,5 @@
 // Offline cache. Bump VERSION whenever any file changes so phones pick up the update.
-const VERSION = 'v15';
+const VERSION = 'v16';
 const CACHE = 'mozgalice-' + VERSION;
 const FILES = [
   './',
@@ -49,7 +49,8 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   e.respondWith(
-    fetch(e.request)
+    // no-cache: always revalidate with the server, so a new version is not hidden behind the browser's HTTP cache.
+    fetch(e.request, { cache: 'no-cache' })
       .then(res => {
         if (res.ok && new URL(e.request.url).origin === location.origin) {
           const copy = res.clone();

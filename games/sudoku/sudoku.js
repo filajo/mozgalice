@@ -94,6 +94,16 @@
     const mine = await Scores.list({ game: 'sudoku', player });
     const d = today(), week = weekDays();
     const todays = mine.filter(s => s.day === d);
+    // Daily results saved under this player name (e.g. on another phone or before a reinstall) also count as
+    // solved here, so the menu ticks and the hidden bonus puzzle unlock even without this phone's local flag.
+    let restored = false;
+    for (const s of todays) {
+      if (s.mode === 'daily' && LEVELS[s.level] && !localStorage.getItem(dailyDoneKey(d, s.level))) {
+        localStorage.setItem(dailyDoneKey(d, s.level), JSON.stringify(s)); restored = true;
+      }
+      if (s.mode === 'bonus' && !localStorage.getItem(bonusDoneKey(d))) { localStorage.setItem(bonusDoneKey(d), JSON.stringify(s)); restored = true; }
+    }
+    if (restored && !$('menu').hidden) { renderMenu(); return; }
     const weeks = mine.filter(s => week.includes(s.day));
     $('stat-today').textContent = todays.length;
     $('stat-today-sub').textContent = todays.length ? `najbolje ${fmt(Math.min(...todays.map(s => s.score)))}` : 'još ništa';
